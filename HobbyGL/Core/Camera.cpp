@@ -1,6 +1,8 @@
 #include "Camera.h"
 #include "Engine.h"
 
+#include <iostream>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 
@@ -11,12 +13,13 @@ Camera::Camera(Display& display)
 	//pitch = 90;
 
 	updateProjectionMatrix();
-	display.subscribeToInput(onDisplaySizeChange);
+	display.subscribeToWindowChange(onDisplaySizeChange);
 }
 
 void Camera::updateProjectionMatrix()
 {
 	projectionMatrix = glm::perspective(glm::radians((float)FOV), (float)Engine::config.width / (float)Engine::config.height, (float)zNEAR, (float)zFAR);
+	orthographicMatrix = glm::ortho(0.0f, (float)Engine::config.width, (float)Engine::config.height, 0.0f, zNEAR, zFAR);
 }
 
 void Camera::updateViewMatrix()
@@ -34,9 +37,10 @@ void Camera::updateViewMatrix()
 	}
 
 	viewProjectionMatrix = projectionMatrix * viewMatrix;
+	viewOrthographicMatrix = orthographicMatrix * viewMatrix;
 }
 
-void Camera::onDisplaySizeChange(GLFWwindow* window)
+void Camera::onDisplaySizeChange(GLFWwindow* window, int width, int height)
 {
 	needsToChange = true;
 }

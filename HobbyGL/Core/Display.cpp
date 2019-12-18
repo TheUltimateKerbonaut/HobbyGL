@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+std::vector<void(*)(GLFWwindow*, int, int)> Display::windowFunctions;
+
 Display::Display(Config config)
 {
 	// Initialise OpenGL
@@ -34,12 +36,19 @@ Display::Display(Config config)
 
 }
 
+void Display::subscribeToWindowChange(void processWindow(GLFWwindow*, int, int))
+{
+	windowFunctions.push_back(processWindow);
+}
 
 void Display::framebuffer_size_callback(GLFWwindow* _window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+
+	for (auto p : windowFunctions)
+		p(_window, width, height);
 }
 
 

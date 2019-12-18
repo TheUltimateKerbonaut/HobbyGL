@@ -37,7 +37,7 @@ void SpriteRenderer::render(Sprite& sprite, Camera& camera)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sprite.texture.textureID);
 
-	glm::mat4 MVP = camera.viewProjectionMatrix * sprite.transform.getMatrix();
+	glm::mat4 MVP = camera.viewOrthographicMatrix * sprite.transform.getMatrix();
 	this->loadMat4(location_MVP, MVP);
 
 	glDrawElements(GL_TRIANGLES, sprite.mesh.vertexCount, GL_UNSIGNED_INT, 0);

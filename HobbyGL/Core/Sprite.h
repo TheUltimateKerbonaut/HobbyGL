@@ -13,6 +13,8 @@ public:
 		mesh = _mesh;
 		texture = _texture;
 		transform = _transform;
+
+		transform.scale = 500;
 	}
 
 	Mesh mesh;

@@ -51,7 +51,7 @@
     <ClCompile Include="Rendering\RenderShaderPrograms\RenderShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\RenderShaderPrograms\SpriteRenderer.cpp">
+    <ClCompile Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClInclude Include="Rendering\RenderShaderPrograms\RenderShaderProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\RenderShaderPrograms\SpriteRenderer.h">
+    <ClInclude Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
