@@ -3,7 +3,7 @@
 #include "..//Core/World.h"
 #include "../Core/Config.h"
 
-#include "RenderShaderPrograms/SpriteRenderer.h"
+#include "RenderShaderPrograms/SpriteRenderer/SpriteRenderer.h"
 
 #include <map>
 #include <vector>

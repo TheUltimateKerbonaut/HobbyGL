@@ -20,12 +20,14 @@ public:
 
 	void update();
 	void subscribeToInput(void processInput(GLFWwindow*));
+	void subscribeToWindowChange(void processWindow(GLFWwindow*, int, int));
 	void beginFrame();
 	bool windowShouldClose();
 
 private:
 	GLFWwindow* window;
 	std::vector<void(*)(GLFWwindow*)> inputFunctions;
+	static std::vector<void(*)(GLFWwindow*, int, int)> windowFunctions;
 
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 

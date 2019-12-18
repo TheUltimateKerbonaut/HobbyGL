@@ -54,10 +54,10 @@ int main()
 			Sprite *cube = new Sprite(Loader::loadToVao(vertices, indices, textureCoords),
 				Loader::loadTexture("crateNormal.png"),
 				Transform());
-			cube->transform.scale = 0.3;
 
 			cube->transform.x = 0.3 * i;
 			cube->transform.y = 0.3 * x;
+			cube->transform.z = 0.0f;
 
 			cube->mesh = Loader::loadToVao(vertices, indices, textureCoords);
 			world.sprites.push_back(*cube);
@@ -68,12 +68,12 @@ int main()
 	while (engine.shouldRun())
 	{	
 		engine.prepare();
-		
+
 		/*cube.transform.scale += 0.01f;
 		cube.transform.rotY += 3.0f;
 		cube.transform.x += 0.001f;*/
 		
-		camera.roll += 0.9f;
+		//camera.roll += 0.9f;
 		//camera.position.z -= 0.005f;
 
 		engine.update(world);

@@ -1,6 +1,6 @@
-#pragma once
+#pragma once	
 
-#include "RenderShaderProgram.h"
+#include "../RenderShaderProgram.h"
 #include "../../Core/Sprite.h"
 #include "../../Core/Camera.h"
 

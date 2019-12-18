@@ -171,7 +171,7 @@
     <ClCompile Include="Rendering\Loader.cpp" />
     <ClCompile Include="Rendering\MasterRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\RenderShaderProgram.cpp" />
-    <ClCompile Include="Rendering\RenderShaderPrograms\SpriteRenderer.cpp" />
+    <ClCompile Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Camera.h" />
@@ -187,7 +187,7 @@
     <ClInclude Include="Rendering\Loader.h" />
     <ClInclude Include="Rendering\MasterRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\RenderShaderProgram.h" />
-    <ClInclude Include="Rendering\RenderShaderPrograms\SpriteRenderer.h" />
+    <ClInclude Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

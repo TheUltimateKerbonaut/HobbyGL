@@ -20,8 +20,10 @@ public:
 	float roll = 0;
 
 	glm::mat4 projectionMatrix;
+	glm::mat4 orthographicMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 viewProjectionMatrix;
+	glm::mat4 viewOrthographicMatrix;
 
 	void updateProjectionMatrix();
 	void updateViewMatrix();
@@ -36,7 +38,7 @@ private:
 
 	static bool needsToChange;
 
-	static void onDisplaySizeChange(GLFWwindow* window);
+	static void onDisplaySizeChange(GLFWwindow* window, int width, int height);
 
 };
 
