@@ -1,8 +1,9 @@
 #include "SpriteRenderer.h"
+#include "../../Core/Camera.h"
 
 #include <glad/glad.h>
 
-SpriteRenderer::SpriteRenderer() : RenderShaderProgram("res/spriteShader.vs", "res/spriteShader.fs")
+SpriteRenderer::SpriteRenderer() : RenderShaderProgram("spriteShader.vs", "spriteShader.fs")
 {
 
 }
@@ -24,7 +25,7 @@ void SpriteRenderer::bindAttributes()
 	this->bindAttribute(1, "textureCoords");
 }
 
-void SpriteRenderer::render(Sprite& sprite)
+void SpriteRenderer::render(Sprite& sprite, Camera& camera)
 {
 	this->bind();
 	this->connectTextureUnits();
@@ -36,7 +37,8 @@ void SpriteRenderer::render(Sprite& sprite)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sprite.texture.textureID);
 
-	this->loadMat4(location_MVP, sprite.transform.getMatrix());
+	glm::mat4 MVP = camera.viewProjectionMatrix * sprite.transform.getMatrix();
+	this->loadMat4(location_MVP, MVP);
 
 	glDrawElements(GL_TRIANGLES, sprite.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 

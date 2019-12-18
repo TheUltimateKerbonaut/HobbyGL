@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+Config Engine::config;
+
 Engine::Engine() : display(config)
 {
 	config = Config();

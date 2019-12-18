@@ -4,7 +4,7 @@
 #include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../stb_image.h"
 
 #include <map>
 
@@ -101,7 +101,6 @@ Texture Loader::loadTexture(std::string fileName)
 	}
 	else
 	{
-		std::cout << "Already have texture " << textures[fileName];
 		return Texture(textures[fileName]);
 	}
 }

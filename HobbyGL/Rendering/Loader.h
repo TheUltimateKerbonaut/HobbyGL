@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Mesh.h"
-#include "Texture.h"
+#include "../Core/Mesh.h"
+#include "../Core/Texture.h"
 
 #include <vector>
 #include <map>

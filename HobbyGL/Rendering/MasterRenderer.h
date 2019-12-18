@@ -1,9 +1,12 @@
 #pragma once
 
-#include "World.h"
-#include "Config.h"
+#include "..//Core/World.h"
+#include "../Core/Config.h"
 
-#include "SpriteRenderer.h"
+#include "RenderShaderPrograms/SpriteRenderer.h"
+
+#include <map>
+#include <vector>
 
 class MasterRenderer
 {
