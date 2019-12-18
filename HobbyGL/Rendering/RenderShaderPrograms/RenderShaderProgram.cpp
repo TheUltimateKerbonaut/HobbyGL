@@ -44,7 +44,6 @@ void RenderShaderProgram::connectTextureUnits() {}
 void RenderShaderProgram::getAllUniformLocations() {}
 void RenderShaderProgram::bindAttributes() {}
 
-
 void RenderShaderProgram::bind()
 {
 	glUseProgram(shaderProgram);

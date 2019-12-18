@@ -14,6 +14,7 @@ void MasterRenderer::prepareFrame(Config& config)
 
 void MasterRenderer::renderFrame(World& world, Config& config)
 {
+	world.camera.updateViewMatrix();
 
 	for (GameObject g : world.gameObjects)
 	{
@@ -26,7 +27,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 
 	for (Sprite s : world.sprites)
 	{
-		spriteRenderer.render(s);
+		spriteRenderer.render(s, world.camera);
 	}
 
 }

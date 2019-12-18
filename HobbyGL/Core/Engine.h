@@ -3,7 +3,7 @@
 #include "World.h"
 #include "Config.h"
 #include "Display.h"
-#include "MasterRenderer.h"
+#include "../Rendering/MasterRenderer.h"
 
 class Engine
 {
@@ -16,7 +16,7 @@ public:
 	void prepare();
 	void update(World& world);
 
-	Config config;
+	static Config config;
 	Display display;
 	MasterRenderer masterRenderer;
 
