@@ -9,9 +9,13 @@
 #include <map>
 
 std::map<std::string, unsigned int> Loader::textures;
+std::vector<unsigned int> Loader::VAOs;
+std::vector<unsigned int> Loader::VBOs;
+std::vector<unsigned int> Loader::Textures;
 
 Loader::Loader()
 {
+
 }
 
 Mesh Loader::loadToVao(std::vector<float> positions, std::vector<unsigned int> indices, std::vector<float> textureCoords)
@@ -35,6 +39,7 @@ unsigned int Loader::createVAO()
 	unsigned int vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	VAOs.push_back(vao);
 	return vao;
 }
 
@@ -44,6 +49,7 @@ void Loader::bindIndicesBuffer(std::vector<unsigned int> indices)
 	glGenBuffers(1, &vboID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices), &indices[0], GL_STATIC_DRAW);
+	VBOs.push_back(vboID);
 }
 
 void Loader::storeDataInAttributeList(unsigned int attributeNumber, unsigned int size, std::vector<float> data)
@@ -54,6 +60,7 @@ void Loader::storeDataInAttributeList(unsigned int attributeNumber, unsigned int
 	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(data), &data[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(attributeNumber, size, GL_FLOAT, GL_FALSE, size * sizeof(float), (void*)0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	VBOs.push_back(vboID);
 }
 
 void Loader::unbindVAO()
@@ -97,6 +104,7 @@ Texture Loader::loadTexture(std::string fileName)
 
 		textures[fileName] = textureID;
 
+		Textures.push_back(textureID);
 		return Texture(textureID);
 	}
 	else
@@ -105,6 +113,75 @@ Texture Loader::loadTexture(std::string fileName)
 	}
 }
 
+Mesh Loader::loadToVao(const std::string& fileName)
+{
+	std::vector<float> vertices;
+	std::vector<unsigned int> indices;
+	std::vector<float> textureCoords;
+
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(("res/" + fileName).c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_FlipUVs);
+
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		std::cerr << "Error: Failed to load model " << fileName << "!" << std::endl;
+		return Mesh();
+	}
+	else
+	{
+		processNode(scene->mRootNode, scene, vertices, indices, textureCoords);
+		return loadToVao(vertices, indices, textureCoords);
+	}
+}
+
+void Loader::processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
+{
+	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+	{
+		aiMesh *mesh = scene->mMeshes[i];
+		processMesh(mesh, scene, vertices, indices, textureCoords);
+	}
+}
+
+void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
+{
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+	{
+
+		vertices.push_back(mesh->mVertices[i].x);
+		vertices.push_back(mesh->mVertices[i].y);
+		vertices.push_back(mesh->mVertices[i].z);
+
+		if (mesh->mTextureCoords[0])
+		{
+			textureCoords.push_back(mesh->mTextureCoords[0][i].x);
+			textureCoords.push_back(mesh->mTextureCoords[0][i].y);
+		}
+		else
+		{
+			std::cerr << "Eror: Model does no have texture coordinates!" << std::endl;
+		}
+	}
+
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			indices.push_back(face.mIndices[j]);
+	}
+}
+
+void Loader::close()
+{
+	for (unsigned int x : VBOs)
+		glDeleteBuffers(1, &x);
+	for (unsigned int x : VAOs)
+		glDeleteVertexArrays(1, &x);
+	for (unsigned int x : Textures)
+		glDeleteTextures(1, &x);
+}
+
 Loader::~Loader()
 {
+	
 }

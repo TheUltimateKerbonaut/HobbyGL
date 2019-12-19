@@ -1,4 +1,7 @@
 #pragma once
+
+#include <glad/glad.h>
+
 class Mesh
 {
 public:
@@ -16,4 +19,5 @@ public:
 
 	unsigned int vaoID;
 	unsigned int vertexCount;
+
 };
