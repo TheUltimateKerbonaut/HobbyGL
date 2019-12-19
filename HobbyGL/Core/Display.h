@@ -24,8 +24,9 @@ public:
 	void beginFrame();
 	bool windowShouldClose();
 
-private:
 	GLFWwindow* window;
+
+private:
 	std::vector<void(*)(GLFWwindow*)> inputFunctions;
 	static std::vector<void(*)(GLFWwindow*, int, int)> windowFunctions;
 

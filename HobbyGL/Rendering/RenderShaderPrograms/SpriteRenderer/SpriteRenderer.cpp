@@ -3,9 +3,11 @@
 
 #include <glad/glad.h>
 
+#include <iostream>
+
 SpriteRenderer::SpriteRenderer() : RenderShaderProgram("spriteShader.vs", "spriteShader.fs")
 {
-
+	getAllUniformLocations();
 }
 
 void SpriteRenderer::connectTextureUnits()
@@ -36,12 +38,10 @@ void SpriteRenderer::render(Sprite& sprite, Camera& camera)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sprite.texture.textureID);
-
 	glm::mat4 MVP = camera.viewOrthographicMatrix * sprite.transform.getMatrix();
 	this->loadMat4(location_MVP, MVP);
 
 	glDrawElements(GL_TRIANGLES, sprite.mesh.vertexCount, GL_UNSIGNED_INT, 0);
-
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glBindVertexArray(0);
