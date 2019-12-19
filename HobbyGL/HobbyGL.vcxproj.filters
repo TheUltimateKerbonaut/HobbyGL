@@ -54,6 +54,15 @@
     <ClCompile Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\FirstPersonCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -99,6 +108,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\FirstPersonCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

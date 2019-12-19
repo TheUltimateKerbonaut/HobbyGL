@@ -4,6 +4,7 @@
 #include "../Core/Config.h"
 
 #include "RenderShaderPrograms/SpriteRenderer/SpriteRenderer.h"
+#include "RenderShaderPrograms/GBufferRenderer/GBufferRenderer.h"
 
 #include <map>
 #include <vector>
@@ -19,6 +20,7 @@ public:
 
 private:
 	SpriteRenderer spriteRenderer;
+	GBufferRenderer gBufferRenderer;
 
 };
 

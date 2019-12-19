@@ -166,6 +166,9 @@
     <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\Display.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
+    <ClCompile Include="Core\Sprite.cpp" />
+    <ClCompile Include="Utils\FirstPersonCamera.cpp" />
+    <ClCompile Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="HobbyGL.cpp" />
     <ClCompile Include="Rendering\Loader.cpp" />
@@ -184,6 +187,8 @@
     <ClInclude Include="Core\Texture.h" />
     <ClInclude Include="Core\Transform.h" />
     <ClInclude Include="Core\World.h" />
+    <ClInclude Include="Utils\FirstPersonCamera.h" />
+    <ClInclude Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.h" />
     <ClInclude Include="Rendering\Loader.h" />
     <ClInclude Include="Rendering\MasterRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\RenderShaderProgram.h" />
