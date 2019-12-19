@@ -37,7 +37,7 @@ void Camera::updateViewMatrix()
 	}
 
 	viewProjectionMatrix = projectionMatrix * viewMatrix;
-	viewOrthographicMatrix = orthographicMatrix * glm::translate(glm::vec3(0, 0, -position.z));
+	viewOrthographicMatrix = orthographicMatrix * glm::translate(glm::vec3(0, 0, -1));
 }
 
 void Camera::onDisplaySizeChange(GLFWwindow* window, int width, int height)

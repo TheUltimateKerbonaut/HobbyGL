@@ -37,6 +37,8 @@ int main()
 	barrel.transform.scale = 0.2;
 	world.gameObjects.push_back(barrel);
 
+	barrel.specularFactor = 0.6;
+
 	while (engine.shouldRun())
 	{
 		engine.prepare();

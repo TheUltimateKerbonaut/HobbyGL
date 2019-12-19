@@ -28,6 +28,7 @@ protected:
 	void loadFloat(unsigned int location, float value);
 	void loadInt(unsigned int location, int value);
 	void loadMat4(unsigned int location, glm::mat4 value);
+	void loadVec3(unsigned int location, glm::vec3 value);
 
 	void validateLinkingSuccesss(unsigned int programID);
 	void validateCompilationSuccesss(unsigned int shaderID, bool isVertexShader, std::string fileName);

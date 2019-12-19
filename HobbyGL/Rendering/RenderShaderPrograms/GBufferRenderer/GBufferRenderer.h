@@ -17,12 +17,20 @@ public:
 
 	virtual void connectTextureUnits();
 
+	void bindFBO();
+	void unbindFBO();
+
+	unsigned int gPosition, gNormal, gColorSpec;
+
 private:
 	virtual void getAllUniformLocations();
 	virtual void bindAttributes();
 
 	unsigned int location_texture;
 	unsigned int location_MVP;
+	unsigned int location_specularFactor;
+
+	unsigned int gBuffer;
 
 };
 

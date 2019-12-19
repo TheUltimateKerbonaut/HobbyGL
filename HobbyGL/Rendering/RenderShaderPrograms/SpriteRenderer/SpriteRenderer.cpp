@@ -7,7 +7,7 @@
 
 SpriteRenderer::SpriteRenderer() : RenderShaderProgram("spriteShader.vs", "spriteShader.fs")
 {
-
+	getAllUniformLocations();
 }
 
 void SpriteRenderer::connectTextureUnits()

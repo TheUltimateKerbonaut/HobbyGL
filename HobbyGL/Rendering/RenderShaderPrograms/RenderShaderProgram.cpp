@@ -32,12 +32,6 @@ RenderShaderProgram::RenderShaderProgram(std::string VERTEX_SHADER_LOCATION, std
 
 	glLinkProgram(shaderProgram);
 	validateLinkingSuccesss(shaderProgram);
-
-	getAllUniformLocations();
-
-	connectTextureUnits();
-
-
 }
 
 void RenderShaderProgram::connectTextureUnits() {}
@@ -72,6 +66,11 @@ void RenderShaderProgram::loadInt(unsigned int location, int value)
 void RenderShaderProgram::loadMat4(unsigned int location, glm::mat4 value)
 {
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void RenderShaderProgram::loadVec3(unsigned int location, glm::vec3 value)
+{
+	glUniform3f(location, value.x, value.y, value.z);
 }
 
 void RenderShaderProgram::validateLinkingSuccesss(unsigned int programID)

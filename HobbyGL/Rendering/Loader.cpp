@@ -34,6 +34,23 @@ Mesh Loader::loadToVao(std::vector<float> positions, std::vector<unsigned int> i
 
 }
 
+Mesh Loader::loadToVao(std::vector<float> positions, std::vector<float> normals, std::vector<unsigned int> indices, std::vector<float> textureCoords)
+{
+	unsigned int vaoID = createVAO();
+
+	bindIndicesBuffer(indices);
+
+	storeDataInAttributeList(0, 3, positions);
+	storeDataInAttributeList(1, 3, normals);
+	storeDataInAttributeList(2, 2, textureCoords);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	unbindVAO();
+
+	return Mesh(vaoID, indices.size());
+
+}
+
 unsigned int Loader::createVAO()
 {
 	unsigned int vao;
@@ -116,6 +133,7 @@ Texture Loader::loadTexture(std::string fileName)
 Mesh Loader::loadToVao(const std::string& fileName)
 {
 	std::vector<float> vertices;
+	std::vector<float> normals;
 	std::vector<unsigned int> indices;
 	std::vector<float> textureCoords;
 
@@ -129,21 +147,21 @@ Mesh Loader::loadToVao(const std::string& fileName)
 	}
 	else
 	{
-		processNode(scene->mRootNode, scene, vertices, indices, textureCoords);
-		return loadToVao(vertices, indices, textureCoords);
+		processNode(scene->mRootNode, scene, vertices, normals, indices, textureCoords);
+		return loadToVao(vertices, normals, indices, textureCoords);
 	}
 }
 
-void Loader::processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
+void Loader::processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
 {
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[i];
-		processMesh(mesh, scene, vertices, indices, textureCoords);
+		processMesh(mesh, scene, vertices, normals, indices, textureCoords);
 	}
 }
 
-void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
+void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
 {
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -151,6 +169,11 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>&
 		vertices.push_back(mesh->mVertices[i].x);
 		vertices.push_back(mesh->mVertices[i].y);
 		vertices.push_back(mesh->mVertices[i].z);
+
+		normals.push_back(mesh->mNormals[i].x);
+		normals.push_back(mesh->mNormals[i].y);
+		normals.push_back(mesh->mNormals[i].z);
+
 
 		if (mesh->mTextureCoords[0])
 		{

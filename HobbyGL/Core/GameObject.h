@@ -16,6 +16,8 @@ public:
 	Texture texture;
 	Transform transform;
 
+	float specularFactor;
+
 	GameObject(Mesh _mesh, Texture _texture, Transform _transform)
 	{
 		mesh = _mesh;
