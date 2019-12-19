@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+#include "../Rendering/Loader.h"
+
 Config Engine::config;
 
 Engine::Engine() : display(config)
@@ -33,5 +35,5 @@ void Engine::onWindowSizeChange(GLFWwindow* window, int width, int height)
 
 Engine::~Engine()
 {
-
+	Loader::close();
 }

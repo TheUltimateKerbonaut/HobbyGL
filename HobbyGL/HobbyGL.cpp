@@ -47,23 +47,11 @@ int main()
 		1.0f, 0.0f
 	};
 
-	for (int i = -10; i < 10; i++)
-	{
-		for (int x = -10; x < 10; x++)
-		{
-			Sprite *cube = new Sprite(Loader::loadToVao(vertices, indices, textureCoords),
-				Loader::loadTexture("crateNormal.png"),
-				Transform());
+	Sprite cube = Sprite(Loader::loadToVao(vertices, indices, textureCoords),
+		Loader::loadTexture("crateNormal.png"),
+		Transform());
+	world.sprites.push_back(cube);
 
-			cube->transform.x = 0.3 * i;
-			cube->transform.y = 0.3 * x;
-			cube->transform.z = 0.0f;
-
-			cube->mesh = Loader::loadToVao(vertices, indices, textureCoords);
-			world.sprites.push_back(*cube);
-		}
-	}
-	
 
 	while (engine.shouldRun())
 	{	
@@ -73,6 +61,8 @@ int main()
 		cube.transform.rotY += 3.0f;
 		cube.transform.x += 0.001f;*/
 		
+		//cube.transform.rotY += 0.8f;
+
 		//camera.roll += 0.9f;
 		//camera.position.z -= 0.005f;
 
