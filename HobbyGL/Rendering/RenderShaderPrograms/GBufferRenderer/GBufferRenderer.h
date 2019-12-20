@@ -3,6 +3,9 @@
 #include "../RenderShaderProgram.h"
 #include "../../Core/GameObject.h"
 #include "../../Core/Camera.h"
+#include "../../Core/Display.h"
+
+#include <glad/glad.h>
 
 #include <map>
 #include <vector>
@@ -10,7 +13,7 @@
 class GBufferRenderer : RenderShaderProgram
 {
 public:
-	GBufferRenderer();
+	GBufferRenderer(Display& display);
 	~GBufferRenderer();
 
 	void render(GameObject& sprite, Camera& camera);
@@ -23,6 +26,12 @@ public:
 	unsigned int gPosition, gNormal, gColorSpec;
 
 private:
+
+	static bool sizeHasChanged;
+	static void onSizeChange(GLFWwindow* window, int width, int height);
+
+	void constructFBO();
+
 	virtual void getAllUniformLocations();
 	virtual void bindAttributes();
 
