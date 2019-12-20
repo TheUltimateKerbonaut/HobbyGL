@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-MasterRenderer::MasterRenderer() : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform())
+MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()), gBufferRenderer(display)
 {
 
 }
@@ -15,6 +15,8 @@ void MasterRenderer::prepareFrame(Config& config)
 
 void MasterRenderer::renderFrame(World& world, Config& config)
 {
+	int bob = config.width;
+
 	world.camera.updateViewMatrix();
 
 	glEnable(GL_DEPTH_TEST);

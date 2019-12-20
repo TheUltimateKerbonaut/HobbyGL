@@ -3,6 +3,9 @@
 #include "../RenderShaderProgram.h"
 #include "../../Core/Sprite.h"
 #include "../../Core/Camera.h"
+#include "../../Core/Display.h"
+
+#include <glfw/glfw3.h>
 
 #include <map>
 #include <vector>

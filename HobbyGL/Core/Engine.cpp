@@ -4,7 +4,7 @@
 
 Config Engine::config;
 
-Engine::Engine() : display(config)
+Engine::Engine() : display(config), masterRenderer(display)
 {
 	config = Config();
 	display.subscribeToWindowChange(onWindowSizeChange);

@@ -4,6 +4,7 @@
 #include "../Core/Config.h"
 #include "../Core/Mesh.h"
 #include "../Core/Sprite.h"
+#include "../Core/Display.h"
 
 #include "RenderShaderPrograms/SpriteRenderer/SpriteRenderer.h"
 #include "RenderShaderPrograms/GBufferRenderer/GBufferRenderer.h"
@@ -15,7 +16,7 @@
 class MasterRenderer
 {
 public:
-	MasterRenderer();
+	MasterRenderer(Display& display);
 	~MasterRenderer();
 
 	void prepareFrame(Config& config);

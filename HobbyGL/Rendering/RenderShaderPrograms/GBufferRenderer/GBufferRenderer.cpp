@@ -5,10 +5,17 @@
 
 #include <glad/glad.h>
 
-GBufferRenderer::GBufferRenderer() : RenderShaderProgram("gBufferShader.vs", "gBufferShader.fs")
+bool GBufferRenderer::sizeHasChanged;
+
+GBufferRenderer::GBufferRenderer(Display& display) : RenderShaderProgram("gBufferShader.vs", "gBufferShader.fs")
 {
 	getAllUniformLocations();
+	constructFBO();
+	display.subscribeToWindowChange(onSizeChange);
+}
 
+void GBufferRenderer::constructFBO()
+{
 	glGenFramebuffers(1, &gBuffer);
 	bindFBO();
 
@@ -80,6 +87,16 @@ void GBufferRenderer::bindFBO()
 
 void GBufferRenderer::render(GameObject& object, Camera& camera)
 {
+	if (sizeHasChanged)
+	{
+		glDeleteTextures(1, &gPosition);
+		glDeleteTextures(1, &gNormal);
+		glDeleteTextures(1, &gColorSpec);
+		glDeleteFramebuffers(1, &gBuffer);
+		constructFBO();
+		sizeHasChanged = false;
+	}
+
 	this->bind();
 	this->connectTextureUnits();
 
@@ -109,6 +126,11 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 void GBufferRenderer::unbindFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void GBufferRenderer::onSizeChange(GLFWwindow* window, int width, int height)
+{
+	sizeHasChanged = true;
 }
 
 GBufferRenderer::~GBufferRenderer()
