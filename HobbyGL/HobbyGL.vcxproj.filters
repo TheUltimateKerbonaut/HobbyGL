@@ -69,6 +69,9 @@
     <ClCompile Include="Rendering\RenderShaderPrograms\SSAORenderer\SSAORenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\RenderShaderPrograms\SSAOBlurRenderer\SSAOBlurRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -129,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\RenderShaderPrograms\SSAORenderer\SSAORenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderShaderPrograms\SSAOBlurRenderer\SSAOBlurRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

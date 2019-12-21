@@ -10,6 +10,7 @@
 #include "RenderShaderPrograms/GBufferRenderer/GBufferRenderer.h"
 #include "RenderShaderPrograms/DeferredLightingRenderer/deferredLightingRenderer.h"
 #include "RenderShaderPrograms/SSAORenderer/SSAORenderer.h"
+#include "RenderShaderPrograms/SSAOBlurRenderer/SSAOBlurRenderer.h"
 
 #include <map>
 #include <vector>
@@ -28,6 +29,7 @@ private:
 	GBufferRenderer gBufferRenderer;
 	DeferredLightingRenderer deferredLightingRenderer;
 	SSAORenderer ssaoRenderer;
+	SSAOBlurRenderer ssaoBlurRenderer;
 
 	const std::vector<float> vertices = {
 	 1.0f,  1.0f, 0.0f,  // top right

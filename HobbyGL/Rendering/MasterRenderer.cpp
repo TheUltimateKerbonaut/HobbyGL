@@ -37,16 +37,23 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	ssaoRenderer.render(renderImage, world.camera, gBufferRenderer.gPosition, gBufferRenderer.gNormal);
 	ssaoRenderer.unbindFBO();
 
+	// SSAO Blur pass
+	ssaoBlurRenderer.bindFBO();
+	prepareFrame(config);
+	glDisable(GL_CULL_FACE);
+	ssaoBlurRenderer.render(renderImage, ssaoRenderer.ssaoColorBuffer);
+	ssaoBlurRenderer.unbindFBO();
+
 	// Enable 2D rendering
 	prepareFrame(config);
 	glDisable(GL_CULL_FACE);
 
 	// Deferred lighting pass
-	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, ssaoRenderer.ssaoColorBuffer);
+	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, ssaoBlurRenderer.fboBlurTexture);
 
 	for (Sprite s : world.sprites)
 	{
-		s.texture.textureID = ssaoRenderer.ssaoColorBuffer;
+		s.texture.textureID = ssaoBlurRenderer.fboBlurTexture;
 		spriteRenderer.render(s, world.camera);
 	}
 

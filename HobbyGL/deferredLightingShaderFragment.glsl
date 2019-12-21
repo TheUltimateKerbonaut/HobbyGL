@@ -90,4 +90,5 @@ void main()
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
+	//outColour = vec4(AmbientOcclusion, AmbientOcclusion, AmbientOcclusion, 1.0);
 }

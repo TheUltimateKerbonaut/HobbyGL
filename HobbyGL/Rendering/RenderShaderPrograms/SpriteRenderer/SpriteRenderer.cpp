@@ -8,6 +8,7 @@
 SpriteRenderer::SpriteRenderer() : RenderShaderProgram("spriteShaderVertex.glsl", "spriteShaderFragment.glsl")
 {
 	getAllUniformLocations();
+	connectTextureUnits();
 }
 
 void SpriteRenderer::connectTextureUnits()
