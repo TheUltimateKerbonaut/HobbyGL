@@ -16,6 +16,7 @@ void DeferredLightingRenderer::connectTextureUnits()
 	this->loadInt(location_gPosition, 0);
 	this->loadInt(location_gNormal, 1);
 	this->loadInt(location_gColour, 2);
+	this->loadInt(location_ssao, 3);
 }
 
 void DeferredLightingRenderer::getAllUniformLocations()
@@ -23,6 +24,7 @@ void DeferredLightingRenderer::getAllUniformLocations()
 	location_gPosition = this->getUniformLocation("gPosition");
 	location_gNormal = this->getUniformLocation("gNormal");
 	location_gColour = this->getUniformLocation("gColour");
+	location_ssao = this->getUniformLocation("ssao");
 
 	location_directionals = this->getUniformLocation("directionals");
 	location_points = this->getUniformLocation("points");
@@ -43,7 +45,7 @@ void DeferredLightingRenderer::bindAttributes()
 	this->bindAttribute(1, "textureCoords");
 }
 
-void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture)
+void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, unsigned int ssaoColorBuffer)
 {
 	this->bind();
 	this->connectTextureUnits();
@@ -58,6 +60,8 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 	glBindTexture(GL_TEXTURE_2D, normalTexture);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, colourTexture);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
 
 	int directionals = 0;
 	int points = 0;

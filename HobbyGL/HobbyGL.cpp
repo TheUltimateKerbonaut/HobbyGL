@@ -32,22 +32,21 @@ int main()
 	World world = World(camera);
 
 	Light sun = Light(Light::directional);
-	sun.position = glm::vec3(10, 10, 10);
+	sun.position = glm::vec3(1, 1, 1);
 	sun.colour = glm::vec3(1, 1, 1);
 	world.lights.push_back(sun);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	world.sprites.push_back(sprite);
 
-	GameObject floor = GameObject("plane", "marble.png");
+	GameObject floor = GameObject("plane", "white.png");
 	floor.transform.position.y = -1;
 	floor.transform.scale = 10;
 	world.gameObjects.push_back(floor);
 
-	GameObject barrel = GameObject("barrel", "barrel.png");
-	world.gameObjects.push_back(barrel);
-	barrel.transform.scale = 0.2f;
-	barrel.specularFactor = 1;
+	GameObject monkey = GameObject("monkey", "white.png");
+	world.gameObjects.push_back(monkey);
+	monkey.specularFactor = 1;
 
 	while (engine.shouldRun())
 	{

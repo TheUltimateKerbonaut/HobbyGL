@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()), gBufferRenderer(display)
+MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()), gBufferRenderer(display), ssaoRenderer(display)
 {
 
 }
@@ -30,15 +30,23 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	}
 	gBufferRenderer.unbindFBO();
 
+	// SSAO pass
+	ssaoRenderer.bindFBO();
+	prepareFrame(config);
+	glDisable(GL_CULL_FACE);
+	ssaoRenderer.render(renderImage, world.camera, gBufferRenderer.gPosition, gBufferRenderer.gNormal);
+	ssaoRenderer.unbindFBO();
+
 	// Enable 2D rendering
-	glDisable(GL_DEPTH_TEST);
+	prepareFrame(config);
 	glDisable(GL_CULL_FACE);
 
 	// Deferred lighting pass
-	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec);
+	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, ssaoRenderer.ssaoColorBuffer);
 
 	for (Sprite s : world.sprites)
 	{
+		s.texture.textureID = ssaoRenderer.ssaoColorBuffer;
 		spriteRenderer.render(s, world.camera);
 	}
 

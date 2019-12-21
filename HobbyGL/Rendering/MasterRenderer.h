@@ -9,6 +9,7 @@
 #include "RenderShaderPrograms/SpriteRenderer/SpriteRenderer.h"
 #include "RenderShaderPrograms/GBufferRenderer/GBufferRenderer.h"
 #include "RenderShaderPrograms/DeferredLightingRenderer/deferredLightingRenderer.h"
+#include "RenderShaderPrograms/SSAORenderer/SSAORenderer.h"
 
 #include <map>
 #include <vector>
@@ -26,6 +27,7 @@ private:
 	SpriteRenderer spriteRenderer;
 	GBufferRenderer gBufferRenderer;
 	DeferredLightingRenderer deferredLightingRenderer;
+	SSAORenderer ssaoRenderer;
 
 	const std::vector<float> vertices = {
 	 1.0f,  1.0f, 0.0f,  // top right

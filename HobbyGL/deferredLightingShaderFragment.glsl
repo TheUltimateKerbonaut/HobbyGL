@@ -7,6 +7,7 @@ in vec2 out_textureCoords;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gColour;
+uniform sampler2D ssao;
 
 uniform vec3 directionalColour[MAX_LIGHTS];
 uniform vec3 directionalPos[MAX_LIGHTS];
@@ -67,10 +68,11 @@ void main()
     vec3 Normal = texture(gNormal, out_textureCoords).rgb;
     vec3 Albedo = texture(gColour, out_textureCoords).rgb;
     float specular = texture(gColour, out_textureCoords).a;
+	float AmbientOcclusion = texture(ssao, out_textureCoords).r;
 
     // Initial lighting calculations
-	const float ambient = 0.02f;
-    vec3 lighting = vec3(ambient, ambient, ambient); // hard-coded ambient component
+	vec3 ambient = vec3(0.1f * AmbientOcclusion);
+    vec3 lighting = ambient;
     vec3 viewDir = normalize(-FragPos);
 
     // Directional lights
@@ -88,6 +90,4 @@ void main()
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
-
-	//outColour = vec4(-out_textureCoords, 0.0, 1.0);
 }
