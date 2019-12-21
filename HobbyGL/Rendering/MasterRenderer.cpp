@@ -53,7 +53,6 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 
 	for (Sprite s : world.sprites)
 	{
-		s.texture.textureID = ssaoBlurRenderer.fboBlurTexture;
 		spriteRenderer.render(s, world.camera);
 	}
 

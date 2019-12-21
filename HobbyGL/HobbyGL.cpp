@@ -39,7 +39,7 @@ int main()
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	world.sprites.push_back(sprite);
 
-	GameObject floor = GameObject("plane", "white.png");
+	GameObject floor = GameObject("plane", "marble.png");
 	floor.transform.position.y = -1;
 	floor.transform.scale = 10;
 	world.gameObjects.push_back(floor);
