@@ -168,6 +168,8 @@
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Sprite.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\DeferredLightingRenderer\DeferredLightingRenderer.cpp" />
+    <ClCompile Include="Rendering\RenderShaderPrograms\SSAOBlurRenderer\SSAOBlurRenderer.cpp" />
+    <ClCompile Include="Rendering\RenderShaderPrograms\SSAORenderer\SSAORenderer.cpp" />
     <ClCompile Include="Utils\FirstPersonCamera.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.cpp" />
     <ClCompile Include="glad.c" />
@@ -188,7 +190,10 @@
     <ClInclude Include="Core\Texture.h" />
     <ClInclude Include="Core\Transform.h" />
     <ClInclude Include="Core\World.h" />
+    <ClInclude Include="Core\Light.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\DeferredLightingRenderer\DeferredLightingRenderer.h" />
+    <ClInclude Include="Rendering\RenderShaderPrograms\SSAOBlurRenderer\SSAOBlurRenderer.h" />
+    <ClInclude Include="Rendering\RenderShaderPrograms\SSAORenderer\SSAORenderer.h" />
     <ClInclude Include="Utils\FirstPersonCamera.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.h" />
     <ClInclude Include="Rendering\Loader.h" />

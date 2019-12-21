@@ -37,11 +37,9 @@ public:
 		mesh = _mesh;
 		texture = _texture;
 		transform = _transform;
-
-		transform.scale = 500;
 	}
 
-	inline Sprite(const std::string& _texture)
+	inline Sprite(const std::string& _texture, float scale)
 	{
 		if (didLoadVAO)
 		{
@@ -57,10 +55,12 @@ public:
 			standardMesh.vertexCount = mesh.vertexCount;
 			didLoadVAO = true;
 		}
-		texture = Loader::loadTexture(_texture);
+		TextureReturn textureReturn = Loader::loadTextureAndGetDimensions(_texture);
+		texture = textureReturn.texture;
 		transform = Transform();
 
-		transform.scale = 500;
+		transform.scale = (float) textureReturn.width * scale;
+		transform.position = glm::vec3((float)textureReturn.width/2.0f*scale, (float)textureReturn.height/2.0f*scale, 0);
 	}
 
 	Mesh mesh;

@@ -73,6 +73,11 @@ void RenderShaderProgram::loadVec3(unsigned int location, glm::vec3 value)
 	glUniform3f(location, value.x, value.y, value.z);
 }
 
+void RenderShaderProgram::loadVec2(unsigned int location, glm::vec2 value)
+{
+	glUniform2f(location, value.x, value.y);
+}
+
 void RenderShaderProgram::validateLinkingSuccesss(unsigned int programID)
 {
 	int success;

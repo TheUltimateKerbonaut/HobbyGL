@@ -17,9 +17,13 @@ public:
 	unsigned int width = 800;
 	unsigned int height = 600;
 
-	float backgroundColourR = 0.2f;
+	/*float backgroundColourR = 0.2f;
 	float backgroundColourG = 0.3f;
-	float backgroundColourB = 0.3f;
+	float backgroundColourB = 0.3f;*/
+
+	float backgroundColourR = 0.0f;
+	float backgroundColourG = 0.0f;
+	float backgroundColourB = 0.0f;
 
 };
 

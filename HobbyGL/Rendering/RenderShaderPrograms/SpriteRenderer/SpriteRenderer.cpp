@@ -5,9 +5,10 @@
 
 #include <iostream>
 
-SpriteRenderer::SpriteRenderer() : RenderShaderProgram("spriteShader.vs", "spriteShader.fs")
+SpriteRenderer::SpriteRenderer() : RenderShaderProgram("spriteShaderVertex.glsl", "spriteShaderFragment.glsl")
 {
 	getAllUniformLocations();
+	connectTextureUnits();
 }
 
 void SpriteRenderer::connectTextureUnits()

@@ -9,6 +9,8 @@
 #include "RenderShaderPrograms/SpriteRenderer/SpriteRenderer.h"
 #include "RenderShaderPrograms/GBufferRenderer/GBufferRenderer.h"
 #include "RenderShaderPrograms/DeferredLightingRenderer/deferredLightingRenderer.h"
+#include "RenderShaderPrograms/SSAORenderer/SSAORenderer.h"
+#include "RenderShaderPrograms/SSAOBlurRenderer/SSAOBlurRenderer.h"
 
 #include <map>
 #include <vector>
@@ -26,6 +28,8 @@ private:
 	SpriteRenderer spriteRenderer;
 	GBufferRenderer gBufferRenderer;
 	DeferredLightingRenderer deferredLightingRenderer;
+	SSAORenderer ssaoRenderer;
+	SSAOBlurRenderer ssaoBlurRenderer;
 
 	const std::vector<float> vertices = {
 	 1.0f,  1.0f, 0.0f,  // top right
@@ -38,10 +42,10 @@ private:
 		1, 2, 3    // second triangle
 	};
 	const std::vector<float> textureCoords = {
+		1.0f, 1.0f,
+		1.0f, 0.0f,
 		0.0f, 0.0f,
-		0.0f, -1.0f,
-		-1.0f, -1.0f,
-		-1.0f, 0.0f
+		0.0f, 1.0f
 	};
 
 	Sprite renderImage;

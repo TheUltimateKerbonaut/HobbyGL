@@ -14,6 +14,7 @@
 #include "Core/Sprite.h"
 #include "Core/Texture.h"
 #include "Core/Transform.h"
+#include "Core/Light.h"
 
 #include "Rendering/Loader.h"
 #include "Rendering/MasterRenderer.h"
@@ -30,14 +31,22 @@ int main()
 	FirstPersonCamera camera = FirstPersonCamera(engine.display);
 	World world = World(camera);
 
-	Sprite image = Sprite("crateNormal.png");
-	world.sprites.push_back(image);
+	Light sun = Light(Light::directional);
+	sun.position = glm::vec3(1, 1, 1);
+	sun.colour = glm::vec3(1, 1, 1);
+	world.lights.push_back(sun);
 
-	GameObject barrel = GameObject("barrel", "barrel.png");
-	barrel.transform.scale = 0.2;
-	world.gameObjects.push_back(barrel);
+	Sprite sprite = Sprite("pappa.png", 0.5f);
+	world.sprites.push_back(sprite);
 
-	barrel.specularFactor = 0.6;
+	GameObject floor = GameObject("plane", "white.png");
+	floor.transform.position.y = -1;
+	floor.transform.scale = 10;
+	world.gameObjects.push_back(floor);
+
+	GameObject monkey = GameObject("monkey", "white.png");
+	world.gameObjects.push_back(monkey);
+	monkey.specularFactor = 1;
 
 	while (engine.shouldRun())
 	{

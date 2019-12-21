@@ -17,4 +17,4 @@ void main()
     gNormal = normalize(out_normal);
     gAlbedoSpec.rgb = texture(diffuseTexture, out_textureCoords).rgb;
     gAlbedoSpec.a = specularFactor;
-} 
+}

@@ -36,7 +36,9 @@ private:
 	virtual void bindAttributes();
 
 	unsigned int location_texture;
-	unsigned int location_MVP;
+	unsigned int location_modelMatrix;
+	unsigned int location_viewMatrix;
+	unsigned int location_projectionMatrix;
 	unsigned int location_specularFactor;
 
 	unsigned int gBuffer;
