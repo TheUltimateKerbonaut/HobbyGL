@@ -62,6 +62,32 @@ vec3 calculatePointLight(int i, vec3 FragPos, vec3 Normal, float specularReflect
 	return finalLighting;
 }
 
+const int indexMatrix4x4[81] = int[](
+	50, 71, 2, 23, 44, 56, 77, 17, 29,
+	72, 12, 33, 45, 66, 6, 18, 39, 60,
+	22, 43, 55, 76, 16, 28, 49, 70, 1,
+	53, 65, 5, 26, 38, 59, 80, 11, 32,
+	75, 15, 27, 48, 69, 0, 21, 42, 54,
+	25, 37, 58, 79, 10, 31, 52, 64, 4,
+	47, 68, 8, 20, 41, 62, 74, 14, 35,
+	78, 9, 30, 51, 63, 3, 24, 36, 57,
+	19, 40, 61, 73, 13, 34, 46, 67, 7
+);
+
+float indexValue() {
+	int x = int(mod(gl_FragCoord.x, 9));
+	int y = int(mod(gl_FragCoord.y, 9));
+	return indexMatrix4x4[(x + y * 9)] / 81.0;
+}
+
+float dither(float color) {
+	float closestColor = (color < 0.5) ? 0 : 1;
+	float secondClosestColor = 1 - closestColor;
+	float d = indexValue();
+	float distance = abs(closestColor - color);
+	return (distance < d) ? closestColor : secondClosestColor;
+}
+
 void main()
 {
     vec3 FragPos = texture(gPosition, out_textureCoords).rgb;
@@ -90,5 +116,8 @@ void main()
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
-	//outColour = vec4(AmbientOcclusion, AmbientOcclusion, AmbientOcclusion, 1.0);
+	
+	if (outColour != vec4(0.0, 0.0, 0.0, 1.0))
+		outColour = vec4(dither(outColour.x), dither(outColour.y), dither(outColour.z), 1.0);
+
 }

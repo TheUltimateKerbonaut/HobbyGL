@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+#include "Engine.h"
+
 std::vector<void(*)(GLFWwindow*, int, int)> Display::windowFunctions;
 
 Display::Display(Config config)

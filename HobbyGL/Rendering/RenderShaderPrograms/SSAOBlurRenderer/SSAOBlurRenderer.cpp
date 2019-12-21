@@ -17,11 +17,12 @@ SSAOBlurRenderer::SSAOBlurRenderer() : RenderShaderProgram("SSAOBlurShaderVertex
 
 void SSAOBlurRenderer::generateFBO()
 {
+
 	glGenFramebuffers(1, &ssaoFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
 	glGenTextures(1, &fboBlurTexture);
 	glBindTexture(GL_TEXTURE_2D, fboBlurTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, Engine::config.width, Engine::config.height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, Engine::config.width / Engine::config.resolutionScale, Engine::config.height / Engine::config.resolutionScale, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboBlurTexture, 0);

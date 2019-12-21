@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include "../Core/Engine.h"
+
 MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()), gBufferRenderer(display), ssaoRenderer(display)
 {
 
@@ -20,6 +22,9 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
+	// Switch to scaled res
+	glViewport(0, 0, config.width / config.resolutionScale, config.height / config.resolutionScale);
 
 	// G-Buffer pass
 	gBufferRenderer.bindFBO();
@@ -44,6 +49,9 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	ssaoBlurRenderer.render(renderImage, ssaoRenderer.ssaoColorBuffer);
 	ssaoBlurRenderer.unbindFBO();
 
+	// Switch back to native res
+	glViewport(0, 0, config.width, config.height);
+
 	// Enable 2D rendering
 	prepareFrame(config);
 	glDisable(GL_CULL_FACE);
@@ -53,6 +61,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 
 	for (Sprite s : world.sprites)
 	{
+		s.texture.textureID = gBufferRenderer.gColorSpec;
 		spriteRenderer.render(s, world.camera);
 	}
 
