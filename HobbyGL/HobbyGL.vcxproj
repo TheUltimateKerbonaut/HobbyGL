@@ -188,6 +188,7 @@
     <ClInclude Include="Core\Texture.h" />
     <ClInclude Include="Core\Transform.h" />
     <ClInclude Include="Core\World.h" />
+    <ClInclude Include="Core\Light.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\DeferredLightingRenderer\DeferredLightingRenderer.h" />
     <ClInclude Include="Utils\FirstPersonCamera.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\GBufferRenderer\GBufferRenderer.h" />

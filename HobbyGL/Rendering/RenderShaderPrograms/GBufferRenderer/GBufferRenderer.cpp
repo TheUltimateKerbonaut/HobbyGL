@@ -7,7 +7,7 @@
 
 bool GBufferRenderer::sizeHasChanged;
 
-GBufferRenderer::GBufferRenderer(Display& display) : RenderShaderProgram("gBufferShader.vs", "gBufferShader.fs")
+GBufferRenderer::GBufferRenderer(Display& display) : RenderShaderProgram("gBufferShaderVertex.glsl", "gBufferShaderFragment.glsl")
 {
 	getAllUniformLocations();
 	constructFBO();
@@ -25,6 +25,8 @@ void GBufferRenderer::constructFBO()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Engine::config.width, Engine::config.height, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
 
 	// Normal color buffer
@@ -33,6 +35,8 @@ void GBufferRenderer::constructFBO()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Engine::config.width, Engine::config.height, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
 
 	// Color + specular color buffer
@@ -41,6 +45,8 @@ void GBufferRenderer::constructFBO()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Engine::config.width, Engine::config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
 
 	// Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
@@ -69,7 +75,9 @@ void GBufferRenderer::connectTextureUnits()
 void GBufferRenderer::getAllUniformLocations()
 {
 	location_texture = this->getUniformLocation("diffuseTexture");
-	location_MVP = this->getUniformLocation("MVP");
+	location_modelMatrix = this->getUniformLocation("modelMatrix");
+	location_viewMatrix = this->getUniformLocation("viewMatrix");
+	location_projectionMatrix = this->getUniformLocation("projectionMatrix");
 	location_specularFactor = this->getUniformLocation("specularFactor");
 }
 
@@ -108,8 +116,9 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, object.texture.textureID);
 
-	glm::mat4 MVP = camera.viewProjectionMatrix * object.transform.getMatrix();
-	this->loadMat4(location_MVP, MVP);
+	this->loadMat4(location_modelMatrix, object.transform.getMatrix());
+	this->loadMat4(location_viewMatrix, camera.viewMatrix);
+	this->loadMat4(location_projectionMatrix, camera.projectionMatrix);
 
 	this->loadFloat(location_specularFactor, object.specularFactor);
 

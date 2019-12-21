@@ -38,10 +38,10 @@ private:
 		1, 2, 3    // second triangle
 	};
 	const std::vector<float> textureCoords = {
+		1.0f, 1.0f,
+		1.0f, 0.0f,
 		0.0f, 0.0f,
-		0.0f, -1.0f,
-		-1.0f, -1.0f,
-		-1.0f, 0.0f
+		0.0f, 1.0f
 	};
 
 	Sprite renderImage;

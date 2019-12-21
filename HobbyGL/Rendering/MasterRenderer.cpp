@@ -9,14 +9,12 @@ MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao
 
 void MasterRenderer::prepareFrame(Config& config)
 {
-	glClearColor(config.backgroundColourR, config.backgroundColourG, config.backgroundColourB, 1.0f);
+	glClearColor(config.backgroundColourR, config.backgroundColourG, config.backgroundColourB, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void MasterRenderer::renderFrame(World& world, Config& config)
 {
-	int bob = config.width;
-
 	world.camera.updateViewMatrix();
 
 	glEnable(GL_DEPTH_TEST);
@@ -37,7 +35,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	glDisable(GL_CULL_FACE);
 
 	// Deferred lighting pass
-	deferredLightingRenderer.render(renderImage, world.camera, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec);
+	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec);
 
 	for (Sprite s : world.sprites)
 	{

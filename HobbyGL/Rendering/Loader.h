@@ -10,10 +10,43 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+struct TextureReturn
+{
+	Texture texture;
+	int width;
+	int height;
+
+	TextureReturn(Texture texture, int width, int height)
+	{
+		this->texture = texture;
+		this->width = width;
+		this->height = height;
+	}
+};
+
+struct TextureMap
+{
+	unsigned int textureID;
+	int width;
+	int height;
+
+	TextureMap(unsigned int textureID, int width, int height)
+	{
+		this->textureID = textureID;
+		this->width = width;
+		this->height = height;
+	}
+
+	TextureMap()
+	{
+
+	}
+};
 
 class Loader
 {
 public:
+
 	Loader();
 	~Loader();
 
@@ -22,12 +55,13 @@ public:
 	static Mesh loadToVao(const std::string& fileName);
 
 	static Texture loadTexture(std::string fileName);
+	static TextureReturn loadTextureAndGetDimensions(std::string fileName);
 
 	static void close();
 
 private:
 	
-	static std::map<std::string, unsigned int> textures;
+	static std::map<std::string, TextureMap> textures;
 		
 	static unsigned int createVAO();
 	static void bindIndicesBuffer(std::vector<unsigned int> indices);

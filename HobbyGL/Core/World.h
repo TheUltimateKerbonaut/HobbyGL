@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "Sprite.h"
+#include "Light.h"
 
 class World
 {
@@ -18,5 +19,6 @@ public:
 	Camera& camera;
 	std::vector<std::reference_wrapper<GameObject>> gameObjects;
 	std::vector<std::reference_wrapper<Sprite>> sprites;
+	std::vector<std::reference_wrapper<Light>> lights;
 
 };

@@ -8,7 +8,7 @@
 
 #include <map>
 
-std::map<std::string, unsigned int> Loader::textures;
+std::map<std::string, TextureMap> Loader::textures;
 std::vector<unsigned int> Loader::VAOs;
 std::vector<unsigned int> Loader::VBOs;
 std::vector<unsigned int> Loader::Textures;
@@ -119,14 +119,58 @@ Texture Loader::loadTexture(std::string fileName)
 
 		stbi_image_free(data);
 
-		textures[fileName] = textureID;
+		textures[fileName] = TextureMap(textureID, width, height);
 
 		Textures.push_back(textureID);
 		return Texture(textureID);
 	}
 	else
 	{
-		return Texture(textures[fileName]);
+		return Texture(textures[fileName].textureID);
+	}
+}
+
+TextureReturn Loader::loadTextureAndGetDimensions(std::string fileName)
+{
+	if (textures.find(fileName) == textures.end())
+	{
+
+		int width, height, nrChannels;
+		unsigned char *data = stbi_load(("res/" + fileName).c_str(), &width, &height, &nrChannels, 0);
+		if (!data)
+		{
+			std::cerr << "Failed to load texture " << fileName.c_str() << std::endl;
+		}
+
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, (nrChannels == 3) ? GL_RGB : GL_RGBA, width, height, 0, (nrChannels == 3) ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		float maxAnisotropy;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy); // 4x anisatropic filtering
+
+		glBindTexture(GL_TEXTURE_2D, 0); // unbind
+
+		stbi_image_free(data);
+
+		textures[fileName] = TextureMap(textureID, width, height);
+
+		Textures.push_back(textureID);
+		return TextureReturn(Texture(textureID), width, height);
+	}
+	else
+	{
+		return TextureReturn(Texture(textures[fileName].textureID), textures[fileName].width, textures[fileName].height);
 	}
 }
 

@@ -122,5 +122,8 @@
     <ClInclude Include="Rendering\RenderShaderPrograms\DeferredLightingRenderer\DeferredLightingRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
