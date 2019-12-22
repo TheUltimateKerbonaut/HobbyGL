@@ -19,7 +19,7 @@ public:
 	~Display();
 
 	void update();
-	void subscribeToInput(void processInput(GLFWwindow*));
+	void subscribeToInput(void processInput(GLFWwindow*, int key, int scancode, int action, int mods));
 	void subscribeToWindowChange(void processWindow(GLFWwindow*, int, int));
 	void beginFrame();
 	bool windowShouldClose();
@@ -27,10 +27,12 @@ public:
 	GLFWwindow* window;
 
 private:
-	std::vector<void(*)(GLFWwindow*)> inputFunctions;
+	static std::vector<void(*)(GLFWwindow*, int, int, int, int)> inputFunctions;
 	static std::vector<void(*)(GLFWwindow*, int, int)> windowFunctions;
 
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+	static void keyInput(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 };
 

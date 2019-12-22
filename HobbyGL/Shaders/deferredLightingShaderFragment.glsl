@@ -19,8 +19,8 @@ uniform vec3 pointAttenuation[MAX_LIGHTS];
 uniform float pointRange[MAX_LIGHTS];
 uniform int points;
 
-out vec4 outColour;
-
+layout(location = 0) out vec4 outColour;
+layout(location = 1) out vec4 brightColour;
 
 vec3 calcDiffuse(vec3 surfaceNormal, vec3 toLightVector, vec3 colour, float attFactor)
 {
@@ -90,5 +90,12 @@ void main()
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
-	//outColour = vec4(AmbientOcclusion, AmbientOcclusion, AmbientOcclusion, 1.0);
+
+	// Bloom
+	float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));
+	//if (brightness > 1.0)
+	//	brightColour = vec4(outColour.rgb, 1.0);
+	//else
+	//	brightColour = vec4(0.0, 0.0, 0.0, 1.0);
+	brightColour = vec4(outColour.rgb * pow(brightness, 2), 1.0);
 }

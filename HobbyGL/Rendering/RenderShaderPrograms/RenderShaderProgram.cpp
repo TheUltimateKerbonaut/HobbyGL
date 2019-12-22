@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
 
 #include <glad/glad.h>
 
@@ -87,6 +88,7 @@ void RenderShaderProgram::validateLinkingSuccesss(unsigned int programID)
 		char infoLog[512];
 		glGetProgramInfoLog(programID, 512, NULL, infoLog);
 		std::cerr << "Error: failed to link shader" << infoLog << std::endl;
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -99,6 +101,7 @@ void RenderShaderProgram::validateCompilationSuccesss(unsigned int shaderID, boo
 		char infoLog[512];
 		glGetProgramInfoLog(shaderID, 512, NULL, infoLog);
 		std::cerr << "Error: failed to compile " << (isVertexShader ? "vertex shader" : "fragment shader") << fileName << " " << infoLog << std::endl;
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -114,7 +117,7 @@ void RenderShaderProgram::bindOutAttribute(unsigned int attribute, std::string a
 
 std::string RenderShaderProgram::loadShaderFromFile(std::string location)
 {
-	std::ifstream in(location);
+	std::ifstream in("Shaders/" + location);
 	std::string contents((std::istreambuf_iterator<char>)(in), std::istreambuf_iterator<char>());
 
 	if (contents == "")

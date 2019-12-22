@@ -3,7 +3,30 @@
 
 #include <glad/glad.h>
 
+#include "Engine.h"
+
 std::vector<void(*)(GLFWwindow*, int, int)> Display::windowFunctions;
+std::vector<void(*)(GLFWwindow*, int, int, int, int)> Display::inputFunctions;
+
+void centerWindow(GLFWwindow *window, GLFWmonitor *monitor)
+{
+	if (!monitor)
+		return;
+
+	const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+	if (!mode)
+		return;
+
+	int monitorX, monitorY;
+	glfwGetMonitorPos(monitor, &monitorX, &monitorY);
+
+	int windowWidth, windowHeight;
+	glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+	glfwSetWindowPos(window,
+		monitorX + (mode->width - windowWidth) / 2,
+		monitorY + (mode->height - windowHeight) / 2);
+}
 
 Display::Display(Config config)
 {
@@ -34,6 +57,11 @@ Display::Display(Config config)
 		std::cout << "Initialised GLAD with OpenGL " << config.glMajorVersion << "." << config.glMinorVersion << std::endl;
 	}
 
+	int monitorCount;
+	GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
+	centerWindow(window, monitors[0]);
+	
+	glfwSetKeyCallback(window, keyInput);
 }
 
 void Display::subscribeToWindowChange(void processWindow(GLFWwindow*, int, int))
@@ -61,11 +89,15 @@ void Display::update()
 
 void Display::beginFrame()
 {
-	for (auto p : inputFunctions)
-		p(window);
 }
 
-void Display::subscribeToInput(void function(GLFWwindow*))
+void Display::keyInput(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	for (auto p : inputFunctions)
+		p(window, key, scancode, action, mods);
+}
+
+void Display::subscribeToInput(void function(GLFWwindow*, int key, int scancode, int action, int mods))
 {
 	inputFunctions.push_back(function);
 }

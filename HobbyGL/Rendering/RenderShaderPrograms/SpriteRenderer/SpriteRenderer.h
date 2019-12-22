@@ -14,6 +14,7 @@ public:
 	~SpriteRenderer();
 
 	void render(Sprite& sprite, Camera& camera);
+	void render(Sprite& sprite);
 
 	virtual void connectTextureUnits();
 

@@ -38,7 +38,7 @@ void SSAORenderer::generateFBO()
 
 	glGenTextures(1, &ssaoColorBuffer);
 	glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, Engine::config.width, Engine::config.height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (unsigned int)(Engine::config.width / Engine::config.resolutionScale), (unsigned int)(Engine::config.height / Engine::config.resolutionScale), 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -136,7 +136,7 @@ void SSAORenderer::render(Sprite& sprite, Camera& camera, unsigned int gPosition
 	
 	for (unsigned int i = 0; i < ssaoKernel.size(); ++i) this->loadVec3(location_samples[i], ssaoKernel[i]);
 	this->loadMat4(location_projectionMatrix, camera.projectionMatrix);
-	this->loadVec2(location_noiseScale, glm::vec2((float)Engine::config.width / 4.0f, (float)Engine::config.height / 4.0f));
+	this->loadVec2(location_noiseScale, glm::vec2((float)(Engine::config.width / Engine::config.resolutionScale) / 4.0f, (float)(Engine::config.height / Engine::config.resolutionScale) / 4.0f));
 
 	glDrawElements(GL_TRIANGLES, sprite.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 	glDisableVertexAttribArray(0);

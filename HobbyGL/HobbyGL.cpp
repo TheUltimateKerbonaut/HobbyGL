@@ -21,7 +21,7 @@
 
 #include "Utils/FirstPersonCamera.h"
 
-static void quitWhenEscape(GLFWwindow* window);
+static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main()
 {
@@ -32,14 +32,20 @@ int main()
 	World world = World(camera);
 
 	Light sun = Light(Light::directional);
-	sun.position = glm::vec3(1, 1, 1);
-	sun.colour = glm::vec3(1, 1, 1);
+	sun.position = glm::vec3(10, 10, 10);
+	sun.colour = glm::vec3(1.0, 1.0, 1.0);
 	world.lights.push_back(sun);
 
-	Sprite sprite = Sprite("pappa.png", 0.5f);
-	world.sprites.push_back(sprite);
+	Light sun2 = Light(Light::directional);
+	sun2.position = glm::vec3(-10, 10, -10);
+	sun2.colour = glm::vec3(1, 0, 0);
+	world.lights.push_back(sun2);
 
-	GameObject floor = GameObject("plane", "white.png");
+	Sprite sprite = Sprite("pappa.png", 0.5f);
+	sprite.transform.scale = 800;
+	//world.sprites.push_back(sprite);
+
+	GameObject floor = GameObject("plane", "marble.png");
 	floor.transform.position.y = -1;
 	floor.transform.scale = 10;
 	world.gameObjects.push_back(floor);
@@ -54,6 +60,8 @@ int main()
 
 		camera.update();
 
+		monkey.transform.rotation.y += 0.1f;
+
 		engine.update(world);
 	}
 
@@ -61,8 +69,16 @@ int main()
 }
 
 
-static void quitWhenEscape(GLFWwindow* window)
+static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+		Engine::config.bloom = !Engine::config.bloom;
+
+	if (key == GLFW_KEY_X && action == GLFW_PRESS)
+		Engine::config.dithering = !Engine::config.dithering;
+
+	glfwSetWindowTitle(window, (std::string("HobbyGL - Bloom: ") + std::string((Engine::config.bloom) ? "True" : "False" + std::string(" - Dithering: ") + std::string((Engine::config.dithering) ? "True" : "False"))).c_str());
 }
