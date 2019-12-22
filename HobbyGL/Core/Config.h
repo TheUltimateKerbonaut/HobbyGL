@@ -15,6 +15,7 @@ public:
 	unsigned int height = 600;
 	float resolutionScale = 1.0f;
 
+	bool bloom = false;
 	bool dithering = false;
 
 	/*float backgroundColourR = 0.2f;

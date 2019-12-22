@@ -59,18 +59,31 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 
 	// Bloom pass
 	bool horizontal = true, first_iteration = true;
-	unsigned int amount = 10;
-	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale / bloomRenderer.scale), (unsigned int)(config.height / config.resolutionScale / bloomRenderer.scale));
-	for (unsigned int i = 0; i < amount; i++)
+	if (config.bloom)
 	{
-		bloomRenderer.bindFBO(horizontal);
-		bloomRenderer.render(renderImage, (first_iteration) ? hdrRenderer.fboBrightTexture : bloomRenderer.fboTextures[!horizontal], horizontal);
-		horizontal = !horizontal;
-		if (first_iteration)
-			first_iteration = false;
+		unsigned int amount = 10;
+		glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale / bloomRenderer.scale), (unsigned int)(config.height / config.resolutionScale / bloomRenderer.scale));
+		for (unsigned int i = 0; i < amount; i++)
+		{
+			bloomRenderer.bindFBO(horizontal);
+			prepareFrame(config);
+			glDisable(GL_CULL_FACE);
+			bloomRenderer.render(renderImage, (first_iteration) ? hdrRenderer.fboBrightTexture : bloomRenderer.fboTextures[!horizontal], horizontal);
+			horizontal = !horizontal;
+			if (first_iteration)
+				first_iteration = false;
+		}
+		bloomRenderer.unbindFBO();
+		glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
 	}
-	bloomRenderer.unbindFBO();
-	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
+	else
+	{
+		bloomRenderer.bindFBO(!horizontal);
+		prepareFrame(config);
+		glDisable(GL_CULL_FACE);
+		bloomRenderer.unbindFBO();
+	}
+	
 
 	// Enable 2D rendering
 	prepareFrame(config);

@@ -21,7 +21,7 @@
 
 #include "Utils/FirstPersonCamera.h"
 
-static void quitWhenEscape(GLFWwindow* window);
+static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main()
 {
@@ -60,6 +60,8 @@ int main()
 
 		camera.update();
 
+		std::cout << Engine::config.bloom << std::endl;
+
 		engine.update(world);
 	}
 
@@ -67,8 +69,11 @@ int main()
 }
 
 
-static void quitWhenEscape(GLFWwindow* window)
+static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+		Engine::config.bloom = !Engine::config.bloom;
 }
