@@ -13,7 +13,9 @@ public:
 
 	unsigned int width = 800;
 	unsigned int height = 600;
-	float resolutionScale = 5.0f;
+	float resolutionScale = 1.0f;
+
+	bool dithering = false;
 
 	/*float backgroundColourR = 0.2f;
 	float backgroundColourG = 0.3f;

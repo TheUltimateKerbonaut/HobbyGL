@@ -11,6 +11,8 @@
 #include "RenderShaderPrograms/DeferredLightingRenderer/deferredLightingRenderer.h"
 #include "RenderShaderPrograms/SSAORenderer/SSAORenderer.h"
 #include "RenderShaderPrograms/SSAOBlurRenderer/SSAOBlurRenderer.h"
+#include "RenderShaderPrograms/PostProcessing/HDR/HDRRenderer.h"
+#include "RenderShaderPrograms/PostProcessing/Bloom/BloomRenderer.h"
 
 #include <map>
 #include <vector>
@@ -30,6 +32,8 @@ private:
 	DeferredLightingRenderer deferredLightingRenderer;
 	SSAORenderer ssaoRenderer;
 	SSAOBlurRenderer ssaoBlurRenderer;
+	HDRRenderer hdrRenderer;
+	BloomRenderer bloomRenderer;
 
 	const std::vector<float> vertices = {
 	 1.0f,  1.0f, 0.0f,  // top right

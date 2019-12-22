@@ -33,15 +33,16 @@ int main()
 
 	Light sun = Light(Light::directional);
 	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(0, 1, 1);
+	sun.colour = glm::vec3(1.0, 1.0, 1.0);
 	world.lights.push_back(sun);
 
 	Light sun2 = Light(Light::directional);
 	sun2.position = glm::vec3(-10, 10, -10);
 	sun2.colour = glm::vec3(1, 0, 0);
-	world.lights.push_back(sun2);
+	//world.lights.push_back(sun2);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
+	sprite.transform.scale = 800;
 	//world.sprites.push_back(sprite);
 
 	GameObject floor = GameObject("plane", "marble.png");

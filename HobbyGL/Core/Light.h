@@ -44,7 +44,6 @@ public:
 			/ (2.0f * quadratic));
 
 		range = radius;
-		range = 1000.0f;
 	}
 
 };

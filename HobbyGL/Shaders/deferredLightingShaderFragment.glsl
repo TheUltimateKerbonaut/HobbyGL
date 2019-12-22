@@ -19,8 +19,8 @@ uniform vec3 pointAttenuation[MAX_LIGHTS];
 uniform float pointRange[MAX_LIGHTS];
 uniform int points;
 
-out vec4 outColour;
-
+layout(location = 0) out vec4 outColour;
+layout(location = 1) out vec4 brightColour;
 
 vec3 calcDiffuse(vec3 surfaceNormal, vec3 toLightVector, vec3 colour, float attFactor)
 {
@@ -62,22 +62,21 @@ vec3 calculatePointLight(int i, vec3 FragPos, vec3 Normal, float specularReflect
 	return finalLighting;
 }
 
-const int indexMatrix4x4[81] = int[](
-	50, 71, 2, 23, 44, 56, 77, 17, 29,
-	72, 12, 33, 45, 66, 6, 18, 39, 60,
-	22, 43, 55, 76, 16, 28, 49, 70, 1,
-	53, 65, 5, 26, 38, 59, 80, 11, 32,
-	75, 15, 27, 48, 69, 0, 21, 42, 54,
-	25, 37, 58, 79, 10, 31, 52, 64, 4,
-	47, 68, 8, 20, 41, 62, 74, 14, 35,
-	78, 9, 30, 51, 63, 3, 24, 36, 57,
-	19, 40, 61, 73, 13, 34, 46, 67, 7
+const int indexMatrix4x4[64] = int[](
+	36, 55, 2, 21, 32, 51, 6, 17,
+	56, 11, 30, 41, 60, 15, 26, 45,
+	20, 39, 50, 5, 16, 35, 54, 1,
+	40, 59, 14, 25, 44, 63, 10, 29,
+	4, 23, 34, 53, 0, 19, 38, 49,
+	24, 43, 62, 9, 28, 47, 58, 13,
+	52, 7, 18, 37, 48, 3, 22, 33,
+	8, 27, 46, 57, 12, 31, 42, 6
 );
 
 float indexValue() {
-	int x = int(mod(gl_FragCoord.x, 9));
-	int y = int(mod(gl_FragCoord.y, 9));
-	return indexMatrix4x4[(x + y * 9)] / 81.0;
+	int x = int(mod(gl_FragCoord.x, 8));
+	int y = int(mod(gl_FragCoord.y, 8));
+	return indexMatrix4x4[(x + y * 8)] / 64.0;
 }
 
 float dither(float color) {
@@ -117,7 +116,14 @@ void main()
 	
 	outColour = vec4(Albedo * lighting, 1.0);
 	
-	if (outColour != vec4(0.0, 0.0, 0.0, 1.0))
-		outColour = vec4(dither(outColour.x), dither(outColour.y), dither(outColour.z), 1.0);
+	//if (outColour != vec4(0.0, 0.0, 0.0, 1.0))
+	//	outColour = vec4(dither(outColour.x), dither(outColour.y), dither(outColour.z), 1.0);
 
+	// Bloom
+	float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));
+	//if (brightness > 1.0)
+	//	brightColour = vec4(outColour.rgb, 1.0);
+	//else
+	//	brightColour = vec4(0.0, 0.0, 0.0, 1.0);
+	brightColour = vec4(outColour.rgb * pow(brightness, 2), 1.0);
 }

@@ -7,6 +7,26 @@
 
 std::vector<void(*)(GLFWwindow*, int, int)> Display::windowFunctions;
 
+void centerWindow(GLFWwindow *window, GLFWmonitor *monitor)
+{
+	if (!monitor)
+		return;
+
+	const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+	if (!mode)
+		return;
+
+	int monitorX, monitorY;
+	glfwGetMonitorPos(monitor, &monitorX, &monitorY);
+
+	int windowWidth, windowHeight;
+	glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+	glfwSetWindowPos(window,
+		monitorX + (mode->width - windowWidth) / 2,
+		monitorY + (mode->height - windowHeight) / 2);
+}
+
 Display::Display(Config config)
 {
 	// Initialise OpenGL
@@ -35,6 +55,10 @@ Display::Display(Config config)
 	{
 		std::cout << "Initialised GLAD with OpenGL " << config.glMajorVersion << "." << config.glMinorVersion << std::endl;
 	}
+
+	int monitorCount;
+	GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
+	centerWindow(window, monitors[0]);
 
 }
 
