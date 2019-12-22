@@ -29,5 +29,4 @@ void main()
 	//mapped = pow(mapped, vec3(1.0 / gamma));
 
 	outColour = vec4(mapped, 1.0);
-	//outColour = texture(bloomTexture, out_textureCoords);
 } 

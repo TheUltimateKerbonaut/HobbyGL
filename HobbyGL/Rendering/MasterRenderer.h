@@ -13,6 +13,9 @@
 #include "RenderShaderPrograms/SSAOBlurRenderer/SSAOBlurRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/HDR/HDRRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/Bloom/BloomRenderer.h"
+#include "RenderShaderPrograms/PostProcessing/Dithering/DitheringRenderer.h"
+
+#include <GLFW/glfw3.h>
 
 #include <map>
 #include <vector>
@@ -34,6 +37,7 @@ private:
 	SSAOBlurRenderer ssaoBlurRenderer;
 	HDRRenderer hdrRenderer;
 	BloomRenderer bloomRenderer;
+	DitheringRenderer ditheringRenderer;
 
 	const std::vector<float> vertices = {
 	 1.0f,  1.0f, 0.0f,  // top right
@@ -53,6 +57,16 @@ private:
 	};
 
 	Sprite renderImage;
+
+	unsigned int fbo;
+	unsigned int fboTexture;
+
+	void constructFBO();
+	void bindFBO();
+	void unbindFBO();
+
+	static bool sizeChanged;
+	static void sizeDidChange(GLFWwindow* window, int width, int height);
 
 };
 

@@ -13,7 +13,7 @@ public:
 
 	unsigned int width = 800;
 	unsigned int height = 600;
-	float resolutionScale = 1.0f;
+	float resolutionScale = 2.5f;
 
 	bool bloom = false;
 	bool dithering = false;

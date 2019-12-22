@@ -39,7 +39,7 @@ int main()
 	Light sun2 = Light(Light::directional);
 	sun2.position = glm::vec3(-10, 10, -10);
 	sun2.colour = glm::vec3(1, 0, 0);
-	//world.lights.push_back(sun2);
+	world.lights.push_back(sun2);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	sprite.transform.scale = 800;
@@ -60,7 +60,7 @@ int main()
 
 		camera.update();
 
-		std::cout << Engine::config.bloom << std::endl;
+		monkey.transform.rotation.y += 0.1f;
 
 		engine.update(world);
 	}
@@ -71,9 +71,14 @@ int main()
 
 static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
 		Engine::config.bloom = !Engine::config.bloom;
+
+	if (key == GLFW_KEY_X && action == GLFW_PRESS)
+		Engine::config.dithering = !Engine::config.dithering;
+
+	glfwSetWindowTitle(window, (std::string("HobbyGL - Bloom: ") + std::string((Engine::config.bloom) ? "True" : "False" + std::string(" - Dithering: ") + std::string((Engine::config.dithering) ? "True" : "False"))).c_str());
 }
