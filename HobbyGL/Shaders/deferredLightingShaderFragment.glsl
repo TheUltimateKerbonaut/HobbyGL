@@ -11,6 +11,9 @@ uniform sampler2D ssao;
 
 uniform vec3 directionalColour[MAX_LIGHTS];
 uniform vec3 directionalPos[MAX_LIGHTS];
+uniform int directionalShadows[MAX_LIGHTS];
+uniform mat4 directionalLightSpaceMatrices[MAX_LIGHTS];
+uniform sampler2DArray directionalShadowmaps;
 uniform int directionals;
 
 uniform vec3 pointColour[MAX_LIGHTS];
@@ -21,6 +24,37 @@ uniform int points;
 
 layout(location = 0) out vec4 outColour;
 layout(location = 1) out vec4 brightColour;
+
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirection, int index)
+{
+	// perform perspective divide
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// transform to [0,1] range
+	projCoords = projCoords * 0.5 + 0.5;
+	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+	float closestDepth = texture(directionalShadowmaps, vec3(projCoords.xy, index)).r;
+	// get depth of current fragment from light's perspective
+	float currentDepth = projCoords.z;
+	// check whether current frag pos is in shadow
+
+	float bias = max(0.05 * (1.0 - dot(normal, lightDirection)), 0.005);
+	bias = clamp(bias, 0, 0.001);
+
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(directionalShadowmaps, 0).xy;
+	for (int x = -1; x <= 1; ++x)
+	{
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(directionalShadowmaps, vec3(projCoords.xy + vec2(x, y) * texelSize, index)).r;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+		}
+	}
+	shadow /= 9.0;
+
+	return shadow;
+}
+
 
 vec3 calcDiffuse(vec3 surfaceNormal, vec3 toLightVector, vec3 colour, float attFactor)
 {
@@ -79,8 +113,12 @@ void main()
 	for (int i = 0; i < directionals; ++i)
 	{
 		vec3 direction = normalize(directionalPos[i] - FragPos);
-		lighting += calcDiffuse(Normal, direction, directionalColour[i], 1);
-		lighting += calcSpecular(specular, viewDir, Normal, direction, directionalColour[i], 1);
+		
+		float shadow = 1;
+		if (directionalShadows[i] >= 0) shadow -= ShadowCalculation(directionalLightSpaceMatrices[i] * vec4(FragPos, 1.0), Normal, direction, directionalShadows[i]);
+
+		lighting += calcDiffuse(Normal, direction, directionalColour[i], 1) * shadow;
+		lighting += calcSpecular(specular, viewDir, Normal, direction, directionalColour[i], 1) * shadow;
 	}
 
 	// Point lights
@@ -90,6 +128,7 @@ void main()
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
+
 
 	// Bloom
 	float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));

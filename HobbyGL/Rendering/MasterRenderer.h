@@ -11,6 +11,7 @@
 #include "RenderShaderPrograms/DeferredLightingRenderer/deferredLightingRenderer.h"
 #include "RenderShaderPrograms/SSAORenderer/SSAORenderer.h"
 #include "RenderShaderPrograms/SSAOBlurRenderer/SSAOBlurRenderer.h"
+#include "RenderShaderPrograms/ShadowRenderer/ShadowRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/HDR/HDRRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/Bloom/BloomRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/Dithering/DitheringRenderer.h"
@@ -35,6 +36,7 @@ private:
 	DeferredLightingRenderer deferredLightingRenderer;
 	SSAORenderer ssaoRenderer;
 	SSAOBlurRenderer ssaoBlurRenderer;
+	ShadowRenderer shadowRenderer;
 	HDRRenderer hdrRenderer;
 	BloomRenderer bloomRenderer;
 	DitheringRenderer ditheringRenderer;

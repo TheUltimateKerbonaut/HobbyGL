@@ -18,9 +18,11 @@ public:
 	DeferredLightingRenderer();
 	~DeferredLightingRenderer();
 
-	void render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, unsigned int ssaoColorBuffer);
+	void render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, unsigned int ssaoColorBuffer, unsigned int directionalShadowmap);
 
 	virtual void connectTextureUnits();
+
+	const static unsigned int maxLights = 25;
 
 private:
 	virtual void getAllUniformLocations();
@@ -31,10 +33,12 @@ private:
 	unsigned int location_gColour;
 	unsigned int location_ssao;
 
-	const unsigned int maxLights = 25;
 	unsigned int location_directionalColour[25];
 	unsigned int location_directionalPos[25];
 	unsigned int location_directionals;
+	unsigned int location_directionalShadows[25];
+	unsigned int location_directionalLightSpaceMatrices[25];
+	unsigned int location_directionalShadowmaps;
 
 	unsigned int location_pointColour[25];
 	unsigned int location_pointPos[25];

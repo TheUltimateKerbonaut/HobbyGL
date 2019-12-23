@@ -71,6 +71,25 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	// Shadows passess
+	glViewport(0, 0, Light::width, Light::height);
+	glCullFace(GL_FRONT);
+	for (unsigned int i = 0; i < world.lights.size(); ++i)
+	{
+		if (world.lights[i].get().lightType == Light::directional && world.lights[i].get().shadows)
+		{
+			shadowRenderer.bindFBO(world.lights[i].get().lightCount);
+			world.lights[i].get().updateLightSpaceMatrix();
+			prepareFrame(config);
+			for (GameObject g : world.gameObjects)
+			{
+				shadowRenderer.render(g, world.lights[i].get());
+			}
+			shadowRenderer.unbindFBO();
+		}
+	}
+	glCullFace(GL_BACK);
+
 	// Switch to scaled res
 	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
 
@@ -83,25 +102,25 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	}
 	gBufferRenderer.unbindFBO();
 
+	// 2D rendering
+	glDisable(GL_CULL_FACE);
+
 	// SSAO pass
 	ssaoRenderer.bindFBO();
 	prepareFrame(config);
-	glDisable(GL_CULL_FACE);
 	ssaoRenderer.render(renderImage, world.camera, gBufferRenderer.gPosition, gBufferRenderer.gNormal);
 	ssaoRenderer.unbindFBO();
 
 	// SSAO Blur pass
 	ssaoBlurRenderer.bindFBO();
 	prepareFrame(config);
-	glDisable(GL_CULL_FACE);
 	ssaoBlurRenderer.render(renderImage, ssaoRenderer.ssaoColorBuffer);
 	ssaoBlurRenderer.unbindFBO();
 
 	// Deferred rendering pass
 	hdrRenderer.bindFBO();
 	prepareFrame(config);
-	glDisable(GL_CULL_FACE);
-	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, ssaoBlurRenderer.fboBlurTexture);
+	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, ssaoBlurRenderer.fboBlurTexture, shadowRenderer.shadowmapTexture);
 	hdrRenderer.unbindFBO();
 
 	// Bloom pass
@@ -114,7 +133,6 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 		{
 			bloomRenderer.bindFBO(horizontal);
 			prepareFrame(config);
-			glDisable(GL_CULL_FACE);
 			bloomRenderer.render(renderImage, (first_iteration) ? hdrRenderer.fboBrightTexture : bloomRenderer.fboTextures[!horizontal], horizontal);
 			horizontal = !horizontal;
 			if (first_iteration)
@@ -127,7 +145,6 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	{
 		bloomRenderer.bindFBO(!horizontal);
 		prepareFrame(config);
-		glDisable(GL_CULL_FACE);
 		bloomRenderer.unbindFBO();
 	}
 
@@ -136,7 +153,6 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	{
 		ditheringRenderer.bindFBO();
 		prepareFrame(config);
-		glDisable(GL_CULL_FACE);
 		ditheringRenderer.render(renderImage, hdrRenderer.fboTexture);
 		ditheringRenderer.unbindFBO();
 	}
@@ -144,7 +160,6 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	// HDR pass
 	bindFBO();
 	prepareFrame(config);
-	glDisable(GL_CULL_FACE);
 	hdrRenderer.render(renderImage, config.dithering ? ditheringRenderer.fboTexture : hdrRenderer.fboTexture, bloomRenderer.fboTextures[!horizontal]);
 	unbindFBO();
 
