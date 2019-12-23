@@ -81,6 +81,12 @@
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\Dithering\DitheringRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\RenderShaderPrograms\ShadowRenderer\ShadowRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -153,6 +159,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\Dithering\DitheringRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderShaderPrograms\ShadowRenderer\ShadowRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

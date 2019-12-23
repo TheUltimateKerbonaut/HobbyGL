@@ -31,19 +31,18 @@ int main()
 	FirstPersonCamera camera = FirstPersonCamera(engine.display);
 	World world = World(camera);
 
-	Light sun = Light(Light::directional);
+	Light sun = Light(Light::directional, true);
 	sun.position = glm::vec3(10, 10, 10);
 	sun.colour = glm::vec3(1.0, 1.0, 1.0);
 	world.lights.push_back(sun);
 
-	Light sun2 = Light(Light::directional);
+	Light sun2 = Light(Light::directional, true);
 	sun2.position = glm::vec3(-10, 10, -10);
 	sun2.colour = glm::vec3(1, 0, 0);
 	world.lights.push_back(sun2);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
-	sprite.transform.scale = 800;
-	//world.sprites.push_back(sprite);
+	world.sprites.push_back(sprite);
 
 	GameObject floor = GameObject("plane", "marble.png");
 	floor.transform.position.y = -1;
@@ -80,5 +79,5 @@ static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 		Engine::config.dithering = !Engine::config.dithering;
 
-	glfwSetWindowTitle(window, (std::string("HobbyGL - Bloom: ") + std::string((Engine::config.bloom) ? "True" : "False" + std::string(" - Dithering: ") + std::string((Engine::config.dithering) ? "True" : "False"))).c_str());
+	glfwSetWindowTitle(window, (std::string("HobbyGL - Bloom: ") + std::string((Engine::config.bloom) ? "True" : "False")).c_str());
 }

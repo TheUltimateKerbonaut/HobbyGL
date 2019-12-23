@@ -11,6 +11,8 @@ uniform sampler2D ssao;
 
 uniform vec3 directionalColour[MAX_LIGHTS];
 uniform vec3 directionalPos[MAX_LIGHTS];
+uniform bool location_directionalShadows[MAX_LIGHTS];
+uniform sampler2DArray directionalShadowmaps;
 uniform int directionals;
 
 uniform vec3 pointColour[MAX_LIGHTS];
@@ -90,6 +92,7 @@ void main()
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
+	outColour = vec4(texture(directionalShadowmaps, vec3(out_textureCoords, 0)).rgb, 1.0);
 
 	// Bloom
 	float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));

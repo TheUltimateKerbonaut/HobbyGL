@@ -17,6 +17,7 @@ void DeferredLightingRenderer::connectTextureUnits()
 	this->loadInt(location_gNormal, 1);
 	this->loadInt(location_gColour, 2);
 	this->loadInt(location_ssao, 3);
+	this->loadInt(location_directionalShadowmaps, 4);
 }
 
 void DeferredLightingRenderer::getAllUniformLocations()
@@ -25,6 +26,7 @@ void DeferredLightingRenderer::getAllUniformLocations()
 	location_gNormal = this->getUniformLocation("gNormal");
 	location_gColour = this->getUniformLocation("gColour");
 	location_ssao = this->getUniformLocation("ssao");
+	location_directionalShadowmaps = this->getUniformLocation("directionalShadowmaps");
 
 	location_directionals = this->getUniformLocation("directionals");
 	location_points = this->getUniformLocation("points");
@@ -32,6 +34,8 @@ void DeferredLightingRenderer::getAllUniformLocations()
 	{
 		location_directionalColour[i] = this->getUniformLocation("directionalColour[" + std::to_string(i) + "]");
 		location_directionalPos[i] = this->getUniformLocation("directionalPos[" + std::to_string(i) + "]");
+		location_directionalShadows[i] = this->getUniformLocation("directionalShadows[" + std::to_string(i) + "]");
+
 		location_pointColour[i] = this->getUniformLocation("pointColour[" + std::to_string(i) + "]");
 		location_pointPos[i] = this->getUniformLocation("pointPos[" + std::to_string(i) + "]");
 		location_pointAttenuation[i] = this->getUniformLocation("pointAttenuation[" + std::to_string(i) + "]");
@@ -45,7 +49,7 @@ void DeferredLightingRenderer::bindAttributes()
 	this->bindAttribute(1, "textureCoords");
 }
 
-void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, unsigned int ssaoColorBuffer)
+void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, unsigned int ssaoColorBuffer, unsigned int directionalShadowmap)
 {
 	this->bind();
 	this->connectTextureUnits();
@@ -62,9 +66,12 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 	glBindTexture(GL_TEXTURE_2D, colourTexture);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, directionalShadowmap);
 
 	int directionals = 0;
 	int points = 0;
+	int shadows = 0;
 	for (unsigned int i = 0; i < lights.size(); i++)
 	{
 		if (i >= maxLights)
@@ -76,6 +83,14 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 			// Transform light position to view space!
 			this->loadVec3(location_directionalPos[directionals], camera.viewMatrix * glm::vec4(lights[i].get().position.x, lights[i].get().position.y, lights[i].get().position.z, 1.0));
 			directionals++;
+
+			if (lights[i].get().shadows)
+			{
+				
+				shadows++;
+				this->loadInt(location_directionalShadows[directionals], lights[i].get().shadows);
+			}
+			else this->loadInt(location_directionalShadows[directionals], lights[i].get().shadows);
 		}
 		else if (lights[i].get().lightType == Light::point)
 		{

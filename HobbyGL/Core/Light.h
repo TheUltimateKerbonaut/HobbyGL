@@ -1,8 +1,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
+
+#include <glad/glad.h>
 
 class Light
 {
@@ -10,15 +14,19 @@ public:
 
 	enum Type { directional, point };
 
-	Light(Light::Type _type)
+	Light(Light::Type _type, bool _shadows)
 	{
 		lightType = _type;
 		colour = glm::vec3(1, 1, 1);
 		calculateRadius();
+
+		shadows = _shadows;
+		lightCount = currentLightCount;
+		currentLightCount++;
 	}
 	~Light()
 	{
-
+		
 	}
 
 	Type lightType;
@@ -45,5 +53,20 @@ public:
 
 		range = radius;
 	}
+
+	// Shadows
+	float near_plane = 1.0f, far_plane = 20.5f;
+	glm::vec2 shadowSize = glm::vec2(10.0f, 10.0f);
+	glm::mat4 lightProjection;
+	glm::mat4 lightView;
+	glm::mat4 lightSpaceMatrix;
+	void updateLightSpaceMatrix();
+
+
+	bool shadows = false;
+	static int width;
+	static int height;
+	unsigned int lightCount;
+	static unsigned int currentLightCount;
 
 };
