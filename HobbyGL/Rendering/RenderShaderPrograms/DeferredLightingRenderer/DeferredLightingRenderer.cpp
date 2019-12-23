@@ -35,6 +35,7 @@ void DeferredLightingRenderer::getAllUniformLocations()
 		location_directionalColour[i] = this->getUniformLocation("directionalColour[" + std::to_string(i) + "]");
 		location_directionalPos[i] = this->getUniformLocation("directionalPos[" + std::to_string(i) + "]");
 		location_directionalShadows[i] = this->getUniformLocation("directionalShadows[" + std::to_string(i) + "]");
+		location_directionalLightSpaceMatrices[i] = this->getUniformLocation("directionalLightSpaceMatrices[" + std::to_string(i) + "]");
 
 		location_pointColour[i] = this->getUniformLocation("pointColour[" + std::to_string(i) + "]");
 		location_pointPos[i] = this->getUniformLocation("pointPos[" + std::to_string(i) + "]");
@@ -71,7 +72,6 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 
 	int directionals = 0;
 	int points = 0;
-	int shadows = 0;
 	for (unsigned int i = 0; i < lights.size(); i++)
 	{
 		if (i >= maxLights)
@@ -82,15 +82,15 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 			this->loadVec3(location_directionalColour[directionals], lights[i].get().colour);
 			// Transform light position to view space!
 			this->loadVec3(location_directionalPos[directionals], camera.viewMatrix * glm::vec4(lights[i].get().position.x, lights[i].get().position.y, lights[i].get().position.z, 1.0));
-			directionals++;
 
 			if (lights[i].get().shadows)
 			{
-				
-				shadows++;
-				this->loadInt(location_directionalShadows[directionals], lights[i].get().shadows);
+				this->loadMat4(location_directionalLightSpaceMatrices[directionals], lights[i].get().lightSpaceMatrix * glm::inverse(camera.viewMatrix));
+				this->loadInt(location_directionalShadows[directionals], lights[i].get().lightCount);
 			}
-			else this->loadInt(location_directionalShadows[directionals], lights[i].get().shadows);
+			else this->loadInt(location_directionalShadows[directionals], -1);
+
+			directionals++;
 		}
 		else if (lights[i].get().lightType == Light::point)
 		{

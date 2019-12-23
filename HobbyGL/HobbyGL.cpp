@@ -33,12 +33,12 @@ int main()
 
 	Light sun = Light(Light::directional, true);
 	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(1.0, 1.0, 1.0);
+	sun.colour = glm::vec3(0.6, 0.6, 0.6);
 	world.lights.push_back(sun);
 
 	Light sun2 = Light(Light::directional, true);
-	sun2.position = glm::vec3(-10, 10, -10);
-	sun2.colour = glm::vec3(1, 0, 0);
+	sun2.position = glm::vec3(3, 4, -10);
+	sun2.colour = glm::vec3(0.8, 0.8, 0.8);
 	world.lights.push_back(sun2);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
@@ -52,6 +52,10 @@ int main()
 	GameObject monkey = GameObject("monkey", "white.png");
 	world.gameObjects.push_back(monkey);
 	monkey.specularFactor = 1;
+
+	GameObject cube = GameObject("cube", "white.png");
+	cube.transform.position.x = 3;
+	world.gameObjects.push_back(cube);
 
 	while (engine.shouldRun())
 	{

@@ -72,12 +72,13 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	glCullFace(GL_BACK);
 
 	// Shadows passess
+	glViewport(0, 0, Light::width, Light::height);
+	glCullFace(GL_FRONT);
 	for (unsigned int i = 0; i < world.lights.size(); ++i)
 	{
 		if (world.lights[i].get().lightType == Light::directional && world.lights[i].get().shadows)
 		{
 			shadowRenderer.bindFBO(world.lights[i].get().lightCount);
-			//glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowRenderer.shadowmapTexture, 0, 0);
 			world.lights[i].get().updateLightSpaceMatrix();
 			prepareFrame(config);
 			for (GameObject g : world.gameObjects)
@@ -87,6 +88,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 			shadowRenderer.unbindFBO();
 		}
 	}
+	glCullFace(GL_BACK);
 
 	// Switch to scaled res
 	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
@@ -174,7 +176,6 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 
 	for (Sprite s : world.sprites)
 	{
-		s.texture.textureID = shadowRenderer.shadowmapTexture;
 		spriteRenderer.render(s, world.camera);
 	}
 

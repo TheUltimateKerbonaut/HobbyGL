@@ -3,9 +3,9 @@
 #include <glad/glad.h>
 #include <iostream>
 
-int Light::width = 800;
-int Light::height = 600;
-unsigned int Light::currentLightCount = 0;
+int Light::width = 2000;
+int Light::height = 2000;
+unsigned int Light::currentDirectionalsLightCount = 0;
 
 void Light::updateLightSpaceMatrix()
 {

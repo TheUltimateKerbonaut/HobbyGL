@@ -11,8 +11,8 @@ public:
 	unsigned int glMajorVersion = 4;
 	unsigned int glMinorVersion = 3;
 
-	unsigned int width = 800;
-	unsigned int height = 600;
+	unsigned int width = 1600;
+	unsigned int height = 900;
 	float resolutionScale = 1.0f; // 2.5f for dithering
 
 	bool bloom = true;

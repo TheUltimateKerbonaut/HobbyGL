@@ -37,6 +37,7 @@ private:
 	unsigned int location_directionalPos[25];
 	unsigned int location_directionals;
 	unsigned int location_directionalShadows[25];
+	unsigned int location_directionalLightSpaceMatrices[25];
 	unsigned int location_directionalShadowmaps;
 
 	unsigned int location_pointColour[25];

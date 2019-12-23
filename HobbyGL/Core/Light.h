@@ -21,8 +21,11 @@ public:
 		calculateRadius();
 
 		shadows = _shadows;
-		lightCount = currentLightCount;
-		currentLightCount++;
+		if (_type == Light::directional)
+		{
+			lightCount = currentDirectionalsLightCount;
+			currentDirectionalsLightCount++;
+		}
 	}
 	~Light()
 	{
@@ -55,8 +58,8 @@ public:
 	}
 
 	// Shadows
-	float near_plane = 1.0f, far_plane = 20.5f;
-	glm::vec2 shadowSize = glm::vec2(10.0f, 10.0f);
+	float near_plane = 1.0f, far_plane = 32.0f;
+	glm::vec2 shadowSize = glm::vec2(20.0f, 20.0f);
 	glm::mat4 lightProjection;
 	glm::mat4 lightView;
 	glm::mat4 lightSpaceMatrix;
@@ -67,6 +70,6 @@ public:
 	static int width;
 	static int height;
 	unsigned int lightCount;
-	static unsigned int currentLightCount;
+	static unsigned int currentDirectionalsLightCount;
 
 };
