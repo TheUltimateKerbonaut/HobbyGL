@@ -6,7 +6,8 @@ uniform sampler2D inputTexture;
 
 out vec4 outColour;
 
-const int indexMatrix4x4[64] = int[](
+const int size = 8;
+const int indexMatrix4x4[size*size] = int[](
 	36, 55, 2, 21, 32, 51, 6, 17,
 	56, 11, 30, 41, 60, 15, 26, 45,
 	20, 39, 50, 5, 16, 35, 54, 1,
@@ -14,13 +15,13 @@ const int indexMatrix4x4[64] = int[](
 	4, 23, 34, 53, 0, 19, 38, 49,
 	24, 43, 62, 9, 28, 47, 58, 13,
 	52, 7, 18, 37, 48, 3, 22, 33,
-	8, 27, 46, 57, 12, 31, 42, 6
-	);
+	8, 27, 46, 57, 12, 31, 42, 61
+);
 
 float indexValue() {
-	int x = int(mod(gl_FragCoord.x, 8));
-	int y = int(mod(gl_FragCoord.y, 8));
-	return indexMatrix4x4[(x + y * 8)] / 64.0;
+	int x = int(mod(gl_FragCoord.x, size));
+	int y = int(mod(gl_FragCoord.y, size));
+	return indexMatrix4x4[(x + y * size)] / float(size*size);
 }
 
 float dither(float color) {

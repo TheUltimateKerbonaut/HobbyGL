@@ -13,7 +13,9 @@ public:
 
 	unsigned int width = 1600;
 	unsigned int height = 900;
-	float resolutionScale = 1.0f; // 2.5f for dithering
+	//float resolutionScale = 4.0f; // 2.5f for dithering
+	//float resolutionScale = width / 320.0f;
+	float resolutionScale = 1.0;
 
 	bool bloom = true;
 	bool dithering = false;

@@ -5,6 +5,7 @@
 #include <GLFW\glfw3.h>
 
 #include <iostream>
+#include <math.h>
 
 #include "Core/Config.h"
 #include "Core/Display.h"
@@ -28,18 +29,27 @@ int main()
 	Engine engine = Engine();
 	engine.display.subscribeToInput(quitWhenEscape);
 
-	FirstPersonCamera camera = FirstPersonCamera(engine.display);
+	Camera camera = Camera(engine.display);
+	camera.position.y = 3;
+
+	float cameraAngle = 0.0f;
+	float distance = 10.0f;
 	World world = World(camera);
 
 	Light sun = Light(Light::directional, true);
 	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(0.6, 0.6, 0.6);
+	sun.colour = glm::vec3(0, 1.6, 0);
 	world.lights.push_back(sun);
 
 	Light sun2 = Light(Light::directional, true);
 	sun2.position = glm::vec3(3, 4, -10);
-	sun2.colour = glm::vec3(0.8, 0.8, 0.8);
+	sun2.colour = glm::vec3(1.8, 0, 0);
 	world.lights.push_back(sun2);
+
+	Light sun3 = Light(Light::directional, true);
+	sun3.position = glm::vec3(-7, 2, -3);
+	sun3.colour = glm::vec3(0.0, 0, 1.8);
+	world.lights.push_back(sun3);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	world.sprites.push_back(sprite);
@@ -57,13 +67,24 @@ int main()
 	cube.transform.position.x = 3;
 	world.gameObjects.push_back(cube);
 
+	GameObject sphere = GameObject("polySphere", "white.png");
+	sphere.transform.position.x = -3;
+	world.gameObjects.push_back(sphere);
+
 	while (engine.shouldRun())
 	{
 		engine.prepare();
 
-		camera.update();
+		cameraAngle += 0.005f;
+		camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
+		camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
+
+		camera.yaw = -glm::degrees(cameraAngle) - 180;
+		camera.pitch = 20;
 
 		monkey.transform.rotation.y += 0.1f;
+
+			std::cout << camera.yaw << std::endl;
 
 		engine.update(world);
 	}
