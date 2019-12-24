@@ -88,6 +88,8 @@ void GBufferRenderer::getAllUniformLocations()
 
 	location_specularMap = this->getUniformLocation("specularMap");
 	location_hasSpecularMap = this->getUniformLocation("hasSpecularMap");
+
+	location_textureTiling = this->getUniformLocation("textureTiling");
 }
 
 void GBufferRenderer::bindAttributes()
@@ -146,6 +148,8 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 	this->loadMat4(location_projectionMatrix, camera.projectionMatrix);
 
 	this->loadFloat(location_specularFactor, object.specularFactor);
+
+	this->loadFloat(location_textureTiling, object.textureTiling);
 
 	glDrawElements(GL_TRIANGLES, object.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 

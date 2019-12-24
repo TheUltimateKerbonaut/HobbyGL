@@ -34,6 +34,7 @@ int main()
 
 	float cameraAngle = 0.0f;
 	float distance = 10.0f;
+	bool releaseControl = false;
 	World world = World(camera);
 
 	Light sun = Light(Light::directional, true);
@@ -44,9 +45,11 @@ int main()
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	world.sprites.push_back(sprite);
 
-	GameObject floor = GameObject("plane", "marble.png");
+	GameObject floor = GameObject("plane", "tileFloor/colour.jpg", "tileFloor/normal.jpg", "tileFloor/colour.jpg");
 	floor.transform.position.y = -1;
 	floor.transform.scale = 10;
+	floor.textureTiling = 2;
+	floor.specularFactor = 10.0f;
 	world.gameObjects.push_back(floor);
 
 	GameObject barrel = GameObject("barrel", "barrel.png", "barrelNormal.png", "barrelSpecular.png");
@@ -54,20 +57,33 @@ int main()
 	barrel.specularFactor = 2;
 	world.gameObjects.push_back(barrel);
 
+	GameObject monkey = GameObject("monkey", "white.png");
+	monkey.transform.position.x = 3;
+	world.gameObjects.push_back(monkey);
+
+	GameObject cube = GameObject("cube", "bricks.png", "bricksNormal.png");
+	cube.transform.position.x = -3;
+	world.gameObjects.push_back(cube);
+
 	while (engine.shouldRun())
 	{
 		engine.prepare();
 
-		camera.update();
+		if (glfwGetKey(engine.display.window, GLFW_KEY_ENTER)) releaseControl = true;
+
+		if (releaseControl) camera.update();
 
 		barrel.transform.rotation.y += 5.0f * Engine::deltaTime;
 
-		/*cameraAngle += 0.5f * Engine::deltaTime;
-		camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
-		camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
+		if (!releaseControl)
+		{
+			cameraAngle += 0.5f * Engine::deltaTime;
+			camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
+			camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
 
-		camera.yaw = -glm::degrees(cameraAngle) - 180;
-		camera.pitch = 20;*/
+			camera.yaw = -glm::degrees(cameraAngle) - 180;
+			camera.pitch = 20;
+		}
 
 		engine.update(world);
 	}

@@ -75,7 +75,7 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 	for (unsigned int i = 0; i < lights.size(); i++)
 	{
 		if (i >= maxLights)
-			std::cerr << "Error: Too many lights - max supported 25" << std::endl;
+			std::cerr << "Error: Too many lights - max supported " << maxLights << std::endl;
 
 		if (lights[i].get().lightType == Light::directional)
 		{

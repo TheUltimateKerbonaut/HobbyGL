@@ -47,6 +47,8 @@ private:
 	unsigned int location_specularMap;
 	unsigned int location_hasSpecularMap;
 
+	unsigned int location_textureTiling;
+
 	unsigned int gBuffer;
 
 };

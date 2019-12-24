@@ -22,7 +22,7 @@ public:
 
 	virtual void connectTextureUnits();
 
-	const static unsigned int maxLights = 25;
+	const static unsigned int maxLights = 15;
 
 private:
 	virtual void getAllUniformLocations();
@@ -33,17 +33,17 @@ private:
 	unsigned int location_gColour;
 	unsigned int location_ssao;
 
-	unsigned int location_directionalColour[25];
-	unsigned int location_directionalPos[25];
+	unsigned int location_directionalColour[15];
+	unsigned int location_directionalPos[15];
 	unsigned int location_directionals;
-	unsigned int location_directionalShadows[25];
-	unsigned int location_directionalLightSpaceMatrices[25];
+	unsigned int location_directionalShadows[15];
+	unsigned int location_directionalLightSpaceMatrices[15];
 	unsigned int location_directionalShadowmaps;
 
-	unsigned int location_pointColour[25];
-	unsigned int location_pointPos[25];
-	unsigned int location_pointAttenuation[25];
-	unsigned int location_pointRange[25];
+	unsigned int location_pointColour[15];
+	unsigned int location_pointPos[15];
+	unsigned int location_pointAttenuation[15];
+	unsigned int location_pointRange[15];
 	unsigned int location_points;
 
 };

@@ -18,23 +18,25 @@ uniform sampler2D specularMap;
 uniform sampler2D diffuseTexture;
 uniform float specularFactor;
 
+uniform float textureTiling;
+
 void main()
 {
     gPosition = out_position;
-    gAlbedoSpec.rgb = texture(diffuseTexture, out_textureCoords).rgb;
+    gAlbedoSpec.rgb = texture(diffuseTexture, textureTiling * out_textureCoords).rgb;
 	gNormal.a = specularFactor;
 
 	gNormal.rgb = normalize(out_normal);
 	
 	if (hasNormalMap)
 	{
-		vec3 normal = texture(normalMap, out_textureCoords).rgb;
+		vec3 normal = texture(normalMap, textureTiling * out_textureCoords).rgb;
 		normal = normalize(normal * 2.0 - 1.0);
 		gNormal.rgb = normalize(TBN * normal);
 	}
 
 	if (hasSpecularMap)
 	{
-		gNormal.a *= texture(specularMap, out_textureCoords).r;
+		gNormal.a *= texture(specularMap, textureTiling * out_textureCoords).r;
 	}
 }
