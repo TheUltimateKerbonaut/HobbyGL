@@ -29,62 +29,61 @@ int main()
 	Engine engine = Engine();
 	engine.display.subscribeToInput(quitWhenEscape);
 
-	Camera camera = Camera(engine.display);
+	FirstPersonCamera camera = FirstPersonCamera(engine.display);
 	camera.position.y = 3;
 
 	float cameraAngle = 0.0f;
 	float distance = 10.0f;
+	bool releaseControl = false;
 	World world = World(camera);
 
 	Light sun = Light(Light::directional, true);
 	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(0, 1.6, 0);
+	sun.colour = glm::vec3(0.8, 0.8, 0.8);
 	world.lights.push_back(sun);
-
-	Light sun2 = Light(Light::directional, true);
-	sun2.position = glm::vec3(3, 4, -10);
-	sun2.colour = glm::vec3(1.8, 0, 0);
-	world.lights.push_back(sun2);
-
-	Light sun3 = Light(Light::directional, true);
-	sun3.position = glm::vec3(-7, 2, -3);
-	sun3.colour = glm::vec3(0.0, 0, 1.8);
-	world.lights.push_back(sun3);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	world.sprites.push_back(sprite);
 
-	GameObject floor = GameObject("plane", "marble.png");
+	GameObject floor = GameObject("plane", "tileFloor/colour.jpg", "tileFloor/normal.jpg", "tileFloor/colour.jpg");
 	floor.transform.position.y = -1;
 	floor.transform.scale = 10;
+	floor.textureTiling = 2;
+	floor.specularFactor = 10.0f;
 	world.gameObjects.push_back(floor);
 
+	GameObject barrel = GameObject("barrel", "barrel.png", "barrelNormal.png", "barrelSpecular.png");
+	barrel.transform.scale = 0.2f;
+	barrel.specularFactor = 2;
+	world.gameObjects.push_back(barrel);
+
 	GameObject monkey = GameObject("monkey", "white.png");
+	monkey.transform.position.x = 3;
 	world.gameObjects.push_back(monkey);
-	monkey.specularFactor = 1;
 
-	GameObject cube = GameObject("cube", "white.png");
-	cube.transform.position.x = 3;
+	GameObject cube = GameObject("cube", "bricks.png", "bricksNormal.png");
+	cube.transform.position.x = -3;
 	world.gameObjects.push_back(cube);
-
-	GameObject sphere = GameObject("polySphere", "white.png");
-	sphere.transform.position.x = -3;
-	world.gameObjects.push_back(sphere);
 
 	while (engine.shouldRun())
 	{
 		engine.prepare();
 
-		cameraAngle += 0.005f;
-		camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
-		camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
+		if (glfwGetKey(engine.display.window, GLFW_KEY_ENTER)) releaseControl = true;
 
-		camera.yaw = -glm::degrees(cameraAngle) - 180;
-		camera.pitch = 20;
+		if (releaseControl) camera.update();
 
-		monkey.transform.rotation.y += 0.1f;
+		barrel.transform.rotation.y += 5.0f * Engine::deltaTime;
 
-			std::cout << camera.yaw << std::endl;
+		if (!releaseControl)
+		{
+			cameraAngle += 0.5f * Engine::deltaTime;
+			camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
+			camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
+
+			camera.yaw = -glm::degrees(cameraAngle) - 180;
+			camera.pitch = 20;
+		}
 
 		engine.update(world);
 	}
@@ -103,6 +102,4 @@ static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action
 
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 		Engine::config.dithering = !Engine::config.dithering;
-
-	glfwSetWindowTitle(window, (std::string("HobbyGL - Bloom: ") + std::string((Engine::config.bloom) ? "True" : "False")).c_str());
 }

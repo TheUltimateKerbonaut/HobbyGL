@@ -163,6 +163,7 @@ void SSAORenderer::onSizeChange(GLFWwindow* window, int width, int height)
 
 SSAORenderer::~SSAORenderer()
 {
+	glDeleteTextures(1, &noiseTexture);
 	glDeleteTextures(1, &ssaoColorBuffer);
 	glDeleteFramebuffers(1, &ssaoFBO);
 }

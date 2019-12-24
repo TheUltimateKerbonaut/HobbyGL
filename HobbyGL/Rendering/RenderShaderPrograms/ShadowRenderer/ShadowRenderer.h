@@ -25,7 +25,7 @@ public:
 	void bindFBO(unsigned int index);
 	void unbindFBO();
 
-	unsigned int shadowmapFBO[25];
+	unsigned int shadowmapFBO[15];
 	unsigned int shadowmapTexture;
 
 private:

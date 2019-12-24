@@ -22,6 +22,13 @@ public:
 	Display display;
 	MasterRenderer masterRenderer;
 
+	// Delta time
+	double currentFrameTime;
+	double lastFrameTime;
+	double timeSinceLastFPSUpdate;
+	static float deltaTime;
+	static float FPS;
+
 private:
 
 	static void onWindowSizeChange(GLFWwindow* window, int width, int height);

@@ -10,6 +10,7 @@ bool GBufferRenderer::sizeHasChanged;
 GBufferRenderer::GBufferRenderer(Display& display) : RenderShaderProgram("gBufferShaderVertex.glsl", "gBufferShaderFragment.glsl")
 {
 	getAllUniformLocations();
+	connectTextureUnits();
 	constructFBO();
 	display.subscribeToWindowChange(onSizeChange);
 }
@@ -29,20 +30,20 @@ void GBufferRenderer::constructFBO()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
 
-	// Normal color buffer
+	// Normal color + specular buffer
 	glGenTextures(1, &gNormal);
 	glBindTexture(GL_TEXTURE_2D, gNormal);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, (unsigned int)(Engine::config.width / Engine::config.resolutionScale), (unsigned int)(Engine::config.height / Engine::config.resolutionScale), 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, (unsigned int)(Engine::config.width / Engine::config.resolutionScale), (unsigned int)(Engine::config.height / Engine::config.resolutionScale), 0, GL_RGBA, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
 
-	// Color + specular color buffer
+	// Color buffer
 	glGenTextures(1, &gColorSpec);
 	glBindTexture(GL_TEXTURE_2D, gColorSpec);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (unsigned int)(Engine::config.width / Engine::config.resolutionScale), (unsigned int)(Engine::config.height / Engine::config.resolutionScale), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (unsigned int)(Engine::config.width / Engine::config.resolutionScale), (unsigned int)(Engine::config.height / Engine::config.resolutionScale), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -70,6 +71,8 @@ void GBufferRenderer::constructFBO()
 void GBufferRenderer::connectTextureUnits()
 {
 	this->loadInt(location_texture, 0);
+	this->loadInt(location_normalMap, 1);
+	this->loadInt(location_specularMap, 2);
 }
 
 void GBufferRenderer::getAllUniformLocations()
@@ -79,6 +82,14 @@ void GBufferRenderer::getAllUniformLocations()
 	location_viewMatrix = this->getUniformLocation("viewMatrix");
 	location_projectionMatrix = this->getUniformLocation("projectionMatrix");
 	location_specularFactor = this->getUniformLocation("specularFactor");
+
+	location_normalMap = this->getUniformLocation("normalMap");
+	location_hasNormalMap = this->getUniformLocation("hasNormalMap");
+
+	location_specularMap = this->getUniformLocation("specularMap");
+	location_hasSpecularMap = this->getUniformLocation("hasSpecularMap");
+
+	location_textureTiling = this->getUniformLocation("textureTiling");
 }
 
 void GBufferRenderer::bindAttributes()
@@ -86,6 +97,7 @@ void GBufferRenderer::bindAttributes()
 	this->bindAttribute(0, "position");
 	this->bindAttribute(1, "normal");
 	this->bindAttribute(2, "textureCoords");
+	this->bindAttribute(3, "tangent");
 }
 
 void GBufferRenderer::bindFBO()
@@ -116,17 +128,35 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, object.texture.textureID);
 
+	if (object.hasNormalMap)
+	{
+		glEnableVertexAttribArray(3);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, object.normalMap.textureID);
+	}
+	if (object.hasSpecularMap)
+	{
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, object.specularMap.textureID);
+	}
+
+	this->loadInt(location_hasNormalMap, object.hasNormalMap);
+	this->loadInt(location_hasSpecularMap, object.hasSpecularMap);
+
 	this->loadMat4(location_modelMatrix, object.transform.getMatrix());
 	this->loadMat4(location_viewMatrix, camera.viewMatrix);
 	this->loadMat4(location_projectionMatrix, camera.projectionMatrix);
 
 	this->loadFloat(location_specularFactor, object.specularFactor);
 
+	this->loadFloat(location_textureTiling, object.textureTiling);
+
 	glDrawElements(GL_TRIANGLES, object.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	if (object.hasNormalMap) glEnableVertexAttribArray(3);
 	glBindVertexArray(0);
 
 	this->unbind();
@@ -144,5 +174,8 @@ void GBufferRenderer::onSizeChange(GLFWwindow* window, int width, int height)
 
 GBufferRenderer::~GBufferRenderer()
 {
+	glDeleteTextures(1, &gPosition);
+	glDeleteTextures(1, &gNormal);
+	glDeleteTextures(1, &gColorSpec);
 	glDeleteFramebuffers(1, &gBuffer);
 }

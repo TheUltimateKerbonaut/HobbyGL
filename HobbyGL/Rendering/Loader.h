@@ -52,7 +52,8 @@ public:
 
 	static Mesh loadToVao(std::vector<float> positions, std::vector<unsigned int> indices, std::vector<float> textureCoords);
 	static Mesh loadToVao(std::vector<float> positions, std::vector<float> normals, std::vector<unsigned int> indices, std::vector<float> textureCoords);
-	static Mesh loadToVao(const std::string& fileName);
+	static Mesh loadToVao(std::vector<float> positions, std::vector<float> normals, std::vector<unsigned int> indices, std::vector<float> textureCoords, std::vector<float> tangents);
+	static Mesh loadToVao(const std::string& fileName, bool hasTangents);
 
 	static Texture loadTexture(std::string fileName);
 	static TextureReturn loadTextureAndGetDimensions(std::string fileName);
@@ -72,8 +73,8 @@ private:
 	static std::vector<unsigned int> VBOs;
 	static std::vector<unsigned int> Textures;
 
-	static void processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords);
-	static void processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords);
+	static void processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords, std::vector<float>& tangents, bool hasTangents);
+	static void processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords, std::vector<float>& tangents, bool hasTangents);
 
 };
 

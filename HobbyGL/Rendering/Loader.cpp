@@ -51,6 +51,23 @@ Mesh Loader::loadToVao(std::vector<float> positions, std::vector<float> normals,
 
 }
 
+Mesh Loader::loadToVao(std::vector<float> positions, std::vector<float> normals, std::vector<unsigned int> indices, std::vector<float> textureCoords, std::vector<float> tangents)
+{
+	unsigned int vaoID = createVAO();
+
+	bindIndicesBuffer(indices);
+
+	storeDataInAttributeList(0, 3, positions);
+	storeDataInAttributeList(1, 3, normals);
+	storeDataInAttributeList(2, 2, textureCoords);
+	storeDataInAttributeList(3, 3, tangents);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	unbindVAO();
+
+	return Mesh(vaoID, indices.size());
+}
+
 unsigned int Loader::createVAO()
 {
 	unsigned int vao;
@@ -174,15 +191,18 @@ TextureReturn Loader::loadTextureAndGetDimensions(std::string fileName)
 	}
 }
 
-Mesh Loader::loadToVao(const std::string& fileName)
+Mesh Loader::loadToVao(const std::string& fileName, bool hasTangents)
 {
 	std::vector<float> vertices;
 	std::vector<float> normals;
 	std::vector<unsigned int> indices;
 	std::vector<float> textureCoords;
+	std::vector<float> tangents;
 
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(("res/" + fileName + ".obj").c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_FlipUVs);
+	auto flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_FlipUVs;
+	if (hasTangents) flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
+	const aiScene *scene = importer.ReadFile(("res/" + fileName + ".obj").c_str(), flags);
 	
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -191,21 +211,23 @@ Mesh Loader::loadToVao(const std::string& fileName)
 	}
 	else
 	{
-		processNode(scene->mRootNode, scene, vertices, normals, indices, textureCoords);
-		return loadToVao(vertices, normals, indices, textureCoords);
+		processNode(scene->mRootNode, scene, vertices, normals, indices, textureCoords, tangents, hasTangents);
+		
+		if (hasTangents) return loadToVao(vertices, normals, indices, textureCoords, tangents);
+		else return loadToVao(vertices, normals, indices, textureCoords);
 	}
 }
 
-void Loader::processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
+void Loader::processNode(aiNode *node, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords, std::vector<float>& tangents, bool hasTangents)
 {
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[i];
-		processMesh(mesh, scene, vertices, normals, indices, textureCoords);
+		processMesh(mesh, scene, vertices, normals, indices, textureCoords, tangents, hasTangents);
 	}
 }
 
-void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords)
+void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>& vertices, std::vector<float>& normals, std::vector<unsigned int>& indices, std::vector<float>& textureCoords, std::vector<float>& tangents, bool hasTangents)
 {
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -218,6 +240,12 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>&
 		normals.push_back(mesh->mNormals[i].y);
 		normals.push_back(mesh->mNormals[i].z);
 
+		if (hasTangents)
+		{
+			tangents.push_back(mesh->mTangents[i].x);
+			tangents.push_back(mesh->mTangents[i].y);
+			tangents.push_back(mesh->mTangents[i].z);
+		}
 
 		if (mesh->mTextureCoords[0])
 		{

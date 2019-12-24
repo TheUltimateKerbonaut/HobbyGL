@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_LIGHTS 25
+#define MAX_LIGHTS 15
 
 in vec2 out_textureCoords;
 
@@ -31,6 +31,10 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirection
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	// transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
+	
+	if (projCoords.z > 1.0)
+		return 0;
+
 	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
 	float closestDepth = texture(directionalShadowmaps, vec3(projCoords.xy, index)).r;
 	// get depth of current fragment from light's perspective
@@ -68,7 +72,7 @@ vec3 calcSpecular(float specularStrength, vec3 viewDir, vec3 normal, vec3 lightD
 	vec3 specular = vec3(0.0, 0.0, 0.0);
 
 	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16);
 
 	specular = (specularStrength * spec * lightColour) * attFactor;
 
@@ -101,7 +105,7 @@ void main()
     vec3 FragPos = texture(gPosition, out_textureCoords).rgb;
     vec3 Normal = texture(gNormal, out_textureCoords).rgb;
     vec3 Albedo = texture(gColour, out_textureCoords).rgb;
-    float specular = texture(gColour, out_textureCoords).a;
+    float specular = texture(gNormal, out_textureCoords).a;
 	float AmbientOcclusion = texture(ssao, out_textureCoords).r;
 
     // Initial lighting calculations

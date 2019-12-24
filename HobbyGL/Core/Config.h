@@ -20,6 +20,8 @@ public:
 	bool bloom = true;
 	bool dithering = false;
 
+	bool vsync = true;
+
 	/*float backgroundColourR = 0.2f;
 	float backgroundColourG = 0.3f;
 	float backgroundColourB = 0.3f;*/

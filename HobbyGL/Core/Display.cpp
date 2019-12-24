@@ -83,6 +83,7 @@ void Display::framebuffer_size_callback(GLFWwindow* _window, int width, int heig
 void Display::update()
 {
 	// Swap buffers and poll events
+	glfwSwapInterval(Engine::config.vsync);
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }

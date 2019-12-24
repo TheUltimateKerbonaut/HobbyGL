@@ -22,8 +22,8 @@ ShadowRenderer::ShadowRenderer() : RenderShaderProgram("shadowShaderVertex.glsl"
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	//float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	
 
 	for (unsigned int i = 0; i < layerCount; ++i)
@@ -109,5 +109,7 @@ void ShadowRenderer::render(GameObject& object, Light& light)
 
 ShadowRenderer::~ShadowRenderer()
 {
-	
+	glDeleteTextures(1, &shadowmapTexture);
+	unsigned int layerCount = DeferredLightingRenderer::maxLights;
+	for (unsigned int i = 0; i < layerCount; ++i) glDeleteFramebuffers(1, &shadowmapFBO[i]);
 }

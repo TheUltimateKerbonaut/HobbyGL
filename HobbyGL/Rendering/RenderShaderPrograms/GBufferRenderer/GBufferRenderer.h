@@ -41,6 +41,14 @@ private:
 	unsigned int location_projectionMatrix;
 	unsigned int location_specularFactor;
 
+	unsigned int location_normalMap;
+	unsigned int location_hasNormalMap;
+
+	unsigned int location_specularMap;
+	unsigned int location_hasSpecularMap;
+
+	unsigned int location_textureTiling;
+
 	unsigned int gBuffer;
 
 };
