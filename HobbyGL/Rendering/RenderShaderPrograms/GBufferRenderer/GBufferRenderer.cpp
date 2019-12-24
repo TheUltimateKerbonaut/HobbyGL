@@ -10,6 +10,7 @@ bool GBufferRenderer::sizeHasChanged;
 GBufferRenderer::GBufferRenderer(Display& display) : RenderShaderProgram("gBufferShaderVertex.glsl", "gBufferShaderFragment.glsl")
 {
 	getAllUniformLocations();
+	connectTextureUnits();
 	constructFBO();
 	display.subscribeToWindowChange(onSizeChange);
 }
@@ -70,6 +71,7 @@ void GBufferRenderer::constructFBO()
 void GBufferRenderer::connectTextureUnits()
 {
 	this->loadInt(location_texture, 0);
+	this->loadInt(location_normalMap, 1);
 }
 
 void GBufferRenderer::getAllUniformLocations()
@@ -79,6 +81,9 @@ void GBufferRenderer::getAllUniformLocations()
 	location_viewMatrix = this->getUniformLocation("viewMatrix");
 	location_projectionMatrix = this->getUniformLocation("projectionMatrix");
 	location_specularFactor = this->getUniformLocation("specularFactor");
+
+	location_normalMap = this->getUniformLocation("normalMap");
+	location_hasNormalMap = this->getUniformLocation("hasNormalMap");
 }
 
 void GBufferRenderer::bindAttributes()
@@ -86,6 +91,7 @@ void GBufferRenderer::bindAttributes()
 	this->bindAttribute(0, "position");
 	this->bindAttribute(1, "normal");
 	this->bindAttribute(2, "textureCoords");
+	this->bindAttribute(3, "tangent");
 }
 
 void GBufferRenderer::bindFBO()
@@ -116,6 +122,15 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, object.texture.textureID);
 
+	if (object.hasNormalMap)
+	{
+		glEnableVertexAttribArray(3);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, object.normalMap.textureID);
+	}
+
+	this->loadInt(location_hasNormalMap, object.hasNormalMap);
+
 	this->loadMat4(location_modelMatrix, object.transform.getMatrix());
 	this->loadMat4(location_viewMatrix, camera.viewMatrix);
 	this->loadMat4(location_projectionMatrix, camera.projectionMatrix);
@@ -127,6 +142,7 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	if (object.hasNormalMap) glEnableVertexAttribArray(3);
 	glBindVertexArray(0);
 
 	this->unbind();

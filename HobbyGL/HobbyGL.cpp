@@ -29,7 +29,7 @@ int main()
 	Engine engine = Engine();
 	engine.display.subscribeToInput(quitWhenEscape);
 
-	Camera camera = Camera(engine.display);
+	FirstPersonCamera camera = FirstPersonCamera(engine.display);
 	camera.position.y = 3;
 
 	float cameraAngle = 0.0f;
@@ -38,18 +38,8 @@ int main()
 
 	Light sun = Light(Light::directional, true);
 	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(0, 1.6, 0);
+	sun.colour = glm::vec3(1.6, 1.6, 1.6);
 	world.lights.push_back(sun);
-
-	Light sun2 = Light(Light::directional, true);
-	sun2.position = glm::vec3(3, 4, -10);
-	sun2.colour = glm::vec3(1.8, 0, 0);
-	world.lights.push_back(sun2);
-
-	Light sun3 = Light(Light::directional, true);
-	sun3.position = glm::vec3(-7, 2, -3);
-	sun3.colour = glm::vec3(0.0, 0, 1.8);
-	world.lights.push_back(sun3);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
 	world.sprites.push_back(sprite);
@@ -59,30 +49,24 @@ int main()
 	floor.transform.scale = 10;
 	world.gameObjects.push_back(floor);
 
-	GameObject monkey = GameObject("monkey", "white.png");
-	world.gameObjects.push_back(monkey);
-	monkey.specularFactor = 1;
-
-	GameObject cube = GameObject("cube", "white.png");
-	cube.transform.position.x = 3;
-	world.gameObjects.push_back(cube);
-
-	GameObject sphere = GameObject("polySphere", "white.png");
-	sphere.transform.position.x = -3;
-	world.gameObjects.push_back(sphere);
+	GameObject barrel = GameObject("barrel", "barrel.png", "barrelNormal.png");
+	barrel.transform.scale = 0.2f;
+	world.gameObjects.push_back(barrel);
 
 	while (engine.shouldRun())
 	{
 		engine.prepare();
 
-		cameraAngle += 0.5f * Engine::deltaTime;
+		camera.update();
+
+		barrel.transform.rotation.y += 5.0f * Engine::deltaTime;
+
+		/*cameraAngle += 0.5f * Engine::deltaTime;
 		camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
 		camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
 
 		camera.yaw = -glm::degrees(cameraAngle) - 180;
-		camera.pitch = 20;
-
-		monkey.transform.rotation.y += 0.1f;
+		camera.pitch = 20;*/
 
 		engine.update(world);
 	}
