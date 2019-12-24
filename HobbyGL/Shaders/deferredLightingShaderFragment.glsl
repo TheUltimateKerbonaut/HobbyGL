@@ -68,7 +68,7 @@ vec3 calcSpecular(float specularStrength, vec3 viewDir, vec3 normal, vec3 lightD
 	vec3 specular = vec3(0.0, 0.0, 0.0);
 
 	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16);
 
 	specular = (specularStrength * spec * lightColour) * attFactor;
 
@@ -101,7 +101,7 @@ void main()
     vec3 FragPos = texture(gPosition, out_textureCoords).rgb;
     vec3 Normal = texture(gNormal, out_textureCoords).rgb;
     vec3 Albedo = texture(gColour, out_textureCoords).rgb;
-    float specular = texture(gColour, out_textureCoords).a;
+    float specular = texture(gNormal, out_textureCoords).a;
 	float AmbientOcclusion = texture(ssao, out_textureCoords).r;
 
     // Initial lighting calculations

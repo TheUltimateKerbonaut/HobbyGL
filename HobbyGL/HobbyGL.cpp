@@ -38,7 +38,7 @@ int main()
 
 	Light sun = Light(Light::directional, true);
 	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(1.6, 1.6, 1.6);
+	sun.colour = glm::vec3(0.8, 0.8, 0.8);
 	world.lights.push_back(sun);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
@@ -49,8 +49,9 @@ int main()
 	floor.transform.scale = 10;
 	world.gameObjects.push_back(floor);
 
-	GameObject barrel = GameObject("barrel", "barrel.png", "barrelNormal.png");
+	GameObject barrel = GameObject("barrel", "barrel.png", "barrelNormal.png", "barrelSpecular.png");
 	barrel.transform.scale = 0.2f;
+	barrel.specularFactor = 2;
 	world.gameObjects.push_back(barrel);
 
 	while (engine.shouldRun())

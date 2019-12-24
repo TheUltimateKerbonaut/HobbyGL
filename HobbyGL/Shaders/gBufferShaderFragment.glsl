@@ -1,8 +1,8 @@
 #version 330 core
 
 layout (location = 0) out vec3 gPosition;
-layout (location = 1) out vec3 gNormal;
-layout (location = 2) out vec4 gAlbedoSpec;
+layout (location = 1) out vec4 gNormal;
+layout (location = 2) out vec3 gAlbedoSpec;
 
 in vec3 out_position;
 in vec3 out_normal;
@@ -12,6 +12,9 @@ in mat3 TBN;
 uniform bool hasNormalMap;
 uniform sampler2D normalMap;
 
+uniform bool hasSpecularMap;
+uniform sampler2D specularMap;
+
 uniform sampler2D diffuseTexture;
 uniform float specularFactor;
 
@@ -19,14 +22,19 @@ void main()
 {
     gPosition = out_position;
     gAlbedoSpec.rgb = texture(diffuseTexture, out_textureCoords).rgb;
-    gAlbedoSpec.a = specularFactor;
+	gNormal.a = specularFactor;
 
-	gNormal = normalize(out_normal);
+	gNormal.rgb = normalize(out_normal);
 	
 	if (hasNormalMap)
 	{
 		vec3 normal = texture(normalMap, out_textureCoords).rgb;
 		normal = normalize(normal * 2.0 - 1.0);
-		gNormal = normalize(TBN * normal);
+		gNormal.rgb = normalize(TBN * normal);
+	}
+
+	if (hasSpecularMap)
+	{
+		gNormal.a *= texture(specularMap, out_textureCoords).r;
 	}
 }

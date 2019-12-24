@@ -19,6 +19,9 @@ public:
 	Texture normalMap;
 	bool hasNormalMap;
 
+	Texture specularMap;
+	bool hasSpecularMap;
+
 	float specularFactor;
 
 	GameObject(Mesh _mesh, Texture _texture, Transform _transform)
@@ -34,6 +37,8 @@ public:
 		texture = Loader::loadTexture(_texture);
 		transform = Transform();
 		hasNormalMap = false;
+		hasSpecularMap = false;
+		specularFactor = 0.0f;
 	}
 
 	GameObject(const std::string& _mesh, const std::string& _texture, const std::string& _normalMap)
@@ -44,6 +49,22 @@ public:
 
 		normalMap = Loader::loadTexture(_normalMap);
 		hasNormalMap = true;
+		hasSpecularMap = false;
+		specularFactor = 0.0f;
+	}
+
+	GameObject(const std::string& _mesh, const std::string& _texture, const std::string& _normalMap, const std::string& _specularMap)
+	{
+		mesh = Loader::loadToVao(_mesh, true);
+		texture = Loader::loadTexture(_texture);
+		transform = Transform();
+
+		normalMap = Loader::loadTexture(_normalMap);
+		hasNormalMap = true;
+
+		specularMap = Loader::loadTexture(_specularMap);
+		hasSpecularMap = true;
+		specularFactor = 1.0f;
 	}
 
 };

@@ -44,6 +44,9 @@ private:
 	unsigned int location_normalMap;
 	unsigned int location_hasNormalMap;
 
+	unsigned int location_specularMap;
+	unsigned int location_hasSpecularMap;
+
 	unsigned int gBuffer;
 
 };

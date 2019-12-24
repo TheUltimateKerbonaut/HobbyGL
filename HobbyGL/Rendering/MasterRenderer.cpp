@@ -58,6 +58,7 @@ void MasterRenderer::prepareFrame(Config& config)
 
 void MasterRenderer::renderFrame(World& world, Config& config)
 {
+
 	if (sizeChanged)
 	{
 		glDeleteTextures(1, &fboTexture);
