@@ -26,6 +26,11 @@ public:
 			lightCount = currentDirectionalsLightCount;
 			currentDirectionalsLightCount++;
 		}
+		else if (_type == Light::point)
+		{
+			lightCount = currentPointsLightCount;;
+			currentPointsLightCount++;
+		}
 	}
 	~Light()
 	{
@@ -58,11 +63,16 @@ public:
 	}
 
 	// Shadows
-	float near_plane = 1.0f, far_plane = 32.0f;
+	static float near_plane;
+	static float far_plane;
 	glm::vec2 shadowSize = glm::vec2(20.0f, 20.0f);
 	glm::mat4 lightProjection;
 	glm::mat4 lightView;
 	glm::mat4 lightSpaceMatrix;
+
+	glm::mat4 lightViews[6];
+	glm::mat4 lightSpaceMatrices[6];
+
 	void updateLightSpaceMatrix();
 
 
@@ -71,5 +81,9 @@ public:
 	static int height;
 	unsigned int lightCount;
 	static unsigned int currentDirectionalsLightCount;
+	static unsigned int currentPointsLightCount;
+
+	static int pointWidth;
+	static int pointHeight;
 
 };

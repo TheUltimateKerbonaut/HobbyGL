@@ -37,13 +37,18 @@ int main()
 	bool releaseControl = false;
 	World world = World(camera);
 
-	Light sun = Light(Light::directional, true);
-	sun.position = glm::vec3(10, 10, 10);
-	sun.colour = glm::vec3(0.8, 0.8, 0.8);
+	Light sun = Light(Light::point, true);
+	sun.position = glm::vec3(0, 1, 3);
+	sun.colour = glm::vec3(0.6f, 0.6f, 0.35f);
 	world.lights.push_back(sun);
 
+	Light sun2 = Light(Light::point, true);
+	sun2.position = glm::vec3(-5, 5, -5);
+	sun2.colour = glm::vec3(0.3, 0.8, 0.8);
+	world.lights.push_back(sun2);
+
 	Sprite sprite = Sprite("pappa.png", 0.5f);
-	world.sprites.push_back(sprite);
+	//world.sprites.push_back(sprite);
 
 	GameObject floor = GameObject("plane", "tileFloor/colour.jpg", "tileFloor/normal.jpg", "tileFloor/colour.jpg");
 	floor.transform.position.y = -1;

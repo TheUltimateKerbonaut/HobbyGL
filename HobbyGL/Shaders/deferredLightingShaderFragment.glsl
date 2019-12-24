@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 #define MAX_LIGHTS 15
 
@@ -8,6 +8,9 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gColour;
 uniform sampler2D ssao;
+
+uniform mat4 viewMatrix;
+uniform vec3 viewPos;
 
 uniform vec3 directionalColour[MAX_LIGHTS];
 uniform vec3 directionalPos[MAX_LIGHTS];
@@ -20,7 +23,10 @@ uniform vec3 pointColour[MAX_LIGHTS];
 uniform vec3 pointPos[MAX_LIGHTS];
 uniform vec3 pointAttenuation[MAX_LIGHTS];
 uniform float pointRange[MAX_LIGHTS];
+uniform bool pointShadows[MAX_LIGHTS];
+uniform samplerCubeArray pointShadowmaps;
 uniform int points;
+uniform float pointFarPlane;
 
 layout(location = 0) out vec4 outColour;
 layout(location = 1) out vec4 brightColour;
@@ -42,7 +48,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirection
 	// check whether current frag pos is in shadow
 
 	float bias = max(0.05 * (1.0 - dot(normal, lightDirection)), 0.005);
-	bias = clamp(bias, 0, 0.001);
+	bias = clamp(bias, 0.0f, 0.001f);
 
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(directionalShadowmaps, 0).xy;
@@ -51,7 +57,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirection
 		for (int y = -1; y <= 1; ++y)
 		{
 			float pcfDepth = texture(directionalShadowmaps, vec3(projCoords.xy + vec2(x, y) * texelSize, index)).r;
-			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+			shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
 		}
 	}
 	shadow /= 9.0;
@@ -59,6 +65,40 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirection
 	return shadow;
 }
 
+const vec3 sampleOffsetDirections[20] = vec3[]
+(
+	vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
+	vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+	vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+	vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
+	vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
+);
+
+float ShadowCalculation(vec3 fragPos, vec3 lightPos, int index)
+{
+	const float far_plane = 32.0f;
+	vec3 fragToLight = (inverse(viewMatrix) * vec4(fragPos, 1.0)).xyz - (inverse(viewMatrix) * vec4(lightPos, 1.0)).xyz;
+
+	float currentDepth = length(fragToLight);
+
+	// PCF
+	float shadow = 0.0;
+	float bias = 0.15f;
+	int samples = 20;
+	float viewDistance = length(viewPos - (inverse(viewMatrix) * vec4(fragPos, 1.0)).xyz);
+	//float diskRadius = 0.05;
+	float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0f;
+	for (int i = 0; i < samples; ++i)
+	{
+		float closestDepth = texture(pointShadowmaps, vec4(fragToLight + sampleOffsetDirections[i] * diskRadius, index)).r;
+		closestDepth *= far_plane;
+		if (currentDepth > closestDepth)
+			shadow += 1.0;
+	}
+	shadow /= float(samples);
+
+	return shadow;
+}
 
 vec3 calcDiffuse(vec3 surfaceNormal, vec3 toLightVector, vec3 colour, float attFactor)
 {
@@ -128,11 +168,13 @@ void main()
 	// Point lights
 	for (int i = 0; i < points; ++i)
 	{
-		lighting += calculatePointLight(i, FragPos, Normal, specular, viewDir);
+		float shadow = 1;
+		if (pointShadows[i]) shadow -= ShadowCalculation(FragPos, pointPos[i], i);
+		lighting += calculatePointLight(i, FragPos, Normal, specular, viewDir) * shadow;
+		//lighting += shadow;
 	}
 	
 	outColour = vec4(Albedo * lighting, 1.0);
-
 
 	// Bloom
 	float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));

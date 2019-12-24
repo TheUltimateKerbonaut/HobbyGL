@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\C++\2019.12\HobbyGL\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\HobbyGL\vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\HobbyGL\vendor\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -169,6 +169,7 @@
     <ClCompile Include="Core\Light.cpp" />
     <ClCompile Include="Core\Sprite.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\DeferredLightingRenderer\DeferredLightingRenderer.cpp" />
+    <ClCompile Include="Rendering\RenderShaderPrograms\PointShadowRenderer\PointShadowRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\Bloom\BloomRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\Dithering\DitheringRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\HDR\HDRRenderer.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Core\World.h" />
     <ClInclude Include="Core\Light.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\DeferredLightingRenderer\DeferredLightingRenderer.h" />
+    <ClInclude Include="Rendering\RenderShaderPrograms\PointShadowRenderer\PointShadowRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\Bloom\BloomRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\Dithering\DitheringRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\HDR\HDRRenderer.h" />
