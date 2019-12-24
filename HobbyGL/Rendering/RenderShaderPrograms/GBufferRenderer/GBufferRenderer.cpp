@@ -144,5 +144,8 @@ void GBufferRenderer::onSizeChange(GLFWwindow* window, int width, int height)
 
 GBufferRenderer::~GBufferRenderer()
 {
+	glDeleteTextures(1, &gPosition);
+	glDeleteTextures(1, &gNormal);
+	glDeleteTextures(1, &gColorSpec);
 	glDeleteFramebuffers(1, &gBuffer);
 }

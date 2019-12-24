@@ -109,5 +109,7 @@ void ShadowRenderer::render(GameObject& object, Light& light)
 
 ShadowRenderer::~ShadowRenderer()
 {
-	
+	glDeleteTextures(1, &shadowmapTexture);
+	unsigned int layerCount = DeferredLightingRenderer::maxLights;
+	for (unsigned int i = 0; i < layerCount; ++i) glDeleteFramebuffers(1, &shadowmapFBO[i]);
 }

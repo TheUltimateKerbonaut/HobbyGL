@@ -63,6 +63,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 		glDeleteTextures(1, &fboTexture);
 		glDeleteBuffers(1, &fbo);
 		constructFBO();
+		sizeChanged = false;
 	}
 
 	world.camera.updateViewMatrix();
