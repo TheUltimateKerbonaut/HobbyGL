@@ -18,7 +18,8 @@ public:
 	DeferredLightingRenderer();
 	~DeferredLightingRenderer();
 
-	void render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, unsigned int ssaoColorBuffer, unsigned int directionalShadowmap);
+	void render(Sprite& sprite, Camera& camera, std::vector<std::reference_wrapper<Light>>& lights, unsigned int positionTexture, unsigned int normalTexture, unsigned int colourTexture, 
+		unsigned int ssaoColorBuffer, unsigned int directionalShadowmap, unsigned int pointShadowmap);
 
 	virtual void connectTextureUnits();
 
@@ -33,6 +34,9 @@ private:
 	unsigned int location_gColour;
 	unsigned int location_ssao;
 
+	unsigned int location_viewMatrix;
+	unsigned int location_viewPos;
+
 	unsigned int location_directionalColour[15];
 	unsigned int location_directionalPos[15];
 	unsigned int location_directionals;
@@ -44,7 +48,10 @@ private:
 	unsigned int location_pointPos[15];
 	unsigned int location_pointAttenuation[15];
 	unsigned int location_pointRange[15];
+	unsigned int location_pointShadows[15];
 	unsigned int location_points;
+	unsigned int location_pointShadowmaps;
+	unsigned int location_pointFarPlane;
 
 };
 

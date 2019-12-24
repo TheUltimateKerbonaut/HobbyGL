@@ -74,12 +74,12 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	glCullFace(GL_BACK);
 
 	// Shadows passess
-	glViewport(0, 0, Light::width, Light::height);
 	glCullFace(GL_FRONT);
 	for (unsigned int i = 0; i < world.lights.size(); ++i)
 	{
 		if (world.lights[i].get().lightType == Light::directional && world.lights[i].get().shadows)
 		{
+			glViewport(0, 0, Light::width, Light::height);
 			shadowRenderer.bindFBO(world.lights[i].get().lightCount);
 			world.lights[i].get().updateLightSpaceMatrix();
 			prepareFrame(config);
@@ -88,6 +88,21 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 				shadowRenderer.render(g, world.lights[i].get());
 			}
 			shadowRenderer.unbindFBO();
+		}
+		else if (world.lights[i].get().lightType == Light::point && world.lights[i].get().shadows)
+		{
+			glViewport(0, 0, Light::pointWidth, Light::pointHeight);
+			for (unsigned int face = 0; face < 6; ++face)
+			{
+				pointShadowRenderer.bindFBO(world.lights[i].get().lightCount, face);
+				world.lights[i].get().updateLightSpaceMatrix();
+				prepareFrame(config);
+				for (GameObject g : world.gameObjects)
+				{
+					pointShadowRenderer.render(g, world.lights[i].get(), face, world.camera);
+				}
+				pointShadowRenderer.unbindFBO();
+			}
 		}
 	}
 	glCullFace(GL_BACK);
@@ -122,7 +137,8 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	// Deferred rendering pass
 	hdrRenderer.bindFBO();
 	prepareFrame(config);
-	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, ssaoBlurRenderer.fboBlurTexture, shadowRenderer.shadowmapTexture);
+	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, 
+		ssaoBlurRenderer.fboBlurTexture, shadowRenderer.shadowmapTexture, pointShadowRenderer.shadowmapTexture);
 	hdrRenderer.unbindFBO();
 
 	// Bloom pass
@@ -155,15 +171,24 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	{
 		ditheringRenderer.bindFBO();
 		prepareFrame(config);
-		ditheringRenderer.render(renderImage, hdrRenderer.fboTexture);
+		hdrRenderer.render(renderImage, hdrRenderer.fboTexture, bloomRenderer.fboTextures[!horizontal]);
 		ditheringRenderer.unbindFBO();
-	}
 
-	// HDR pass
-	bindFBO();
-	prepareFrame(config);
-	hdrRenderer.render(renderImage, config.dithering ? ditheringRenderer.fboTexture : hdrRenderer.fboTexture, bloomRenderer.fboTextures[!horizontal]);
-	unbindFBO();
+		// HDR pass
+		bindFBO();
+		prepareFrame(config);
+		ditheringRenderer.render(renderImage, ditheringRenderer.fboTexture);
+		unbindFBO();
+	}
+	else
+	{
+		// HDR pass
+		bindFBO();
+		prepareFrame(config);
+		hdrRenderer.render(renderImage, hdrRenderer.fboTexture, bloomRenderer.fboTextures[!horizontal]);
+		unbindFBO();
+	}
+	
 
 	// Switch back to native res
 	glViewport(0, 0, config.width, config.height);
