@@ -75,7 +75,7 @@ int main()
 	{
 		engine.prepare();
 
-		cameraAngle += 0.005f;
+		cameraAngle += 0.5f * Engine::deltaTime;
 		camera.position.x = distance * std::sin(cameraAngle) * std::cos(distance);
 		camera.position.z = distance * std::cos(cameraAngle) * std::sin(distance);
 
@@ -83,8 +83,6 @@ int main()
 		camera.pitch = 20;
 
 		monkey.transform.rotation.y += 0.1f;
-
-			std::cout << camera.yaw << std::endl;
 
 		engine.update(world);
 	}
@@ -103,6 +101,4 @@ static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action
 
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 		Engine::config.dithering = !Engine::config.dithering;
-
-	glfwSetWindowTitle(window, (std::string("HobbyGL - Bloom: ") + std::string((Engine::config.bloom) ? "True" : "False")).c_str());
 }
