@@ -16,6 +16,8 @@
 #include "RenderShaderPrograms/PostProcessing/HDR/HDRRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/Bloom/BloomRenderer.h"
 #include "RenderShaderPrograms/PostProcessing/Dithering/DitheringRenderer.h"
+#include "RenderShaderPrograms/PostProcessing/DOF/DOFRenderer.h"
+#include "RenderShaderPrograms/PostProcessing/ChromaticAbberation/ChromaticAbberation.h"
 
 #include <GLFW/glfw3.h>
 
@@ -42,6 +44,8 @@ private:
 	HDRRenderer hdrRenderer;
 	BloomRenderer bloomRenderer;
 	DitheringRenderer ditheringRenderer;
+	DOFRenderer dofRenderer;
+	ChromaticAbberation chromaticAbberation;
 
 	const std::vector<float> vertices = {
 	 1.0f,  1.0f, 0.0f,  // top right

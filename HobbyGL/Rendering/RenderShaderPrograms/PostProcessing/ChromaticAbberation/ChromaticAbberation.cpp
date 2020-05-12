@@ -1,20 +1,22 @@
-#include "HDRRenderer.h"
+#include "ChromaticAbberation.h"
 #include "../../Core/Camera.h"
 
 #include "../../Core/Engine.h"
 
 #include <glad/glad.h>
 
-bool HDRRenderer::sizeHasChanged;
+#include "../../../../Utils/Logger.h"
 
-HDRRenderer::HDRRenderer(Display& display) : RenderShaderProgram("HDRShaderVertex.glsl", "HDRShaderFragment.glsl")
+bool ChromaticAbberation::sizeHasChanged;
+
+ChromaticAbberation::ChromaticAbberation(Display& display) : RenderShaderProgram("chromaticAberrationVertex.glsl", "chromaticAberrationFragment.glsl")
 {
 	getAllUniformLocations();
 	constructFBO();
 	display.subscribeToWindowChange(onSizeChange);
 }
 
-void HDRRenderer::constructFBO()
+void ChromaticAbberation::constructFBO()
 {
 	glGenFramebuffers(1, &fbo);
 	bindFBO();
@@ -29,51 +31,35 @@ void HDRRenderer::constructFBO()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexture, 0);
 
-	// Bright buffer
-	glGenTextures(1, &fboBrightTexture);
-	glBindTexture(GL_TEXTURE_2D, fboBrightTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, (unsigned int)(Engine::config.width / Engine::config.resolutionScale), (unsigned int)(Engine::config.height / Engine::config.resolutionScale), 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, fboBrightTexture, 0);
-
-	// Attach both
-	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, attachments);
-
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cerr << "Error: GBuffer frame buffer incomplete" << std::endl;
+		Logger::err("Error: Dithering frame buffer incomplete");
 
 	unbindFBO();
+	
 }
 
-void HDRRenderer::connectTextureUnits()
+void ChromaticAbberation::connectTextureUnits()
 {
 	this->loadInt(location_texture, 0);
-	this->loadInt(location_bloomTexture, 1);
 }
 
-void HDRRenderer::getAllUniformLocations()
+void ChromaticAbberation::getAllUniformLocations()
 {
-	location_texture = this->getUniformLocation("hdrTexture");
-	location_bloomTexture = this->getUniformLocation("bloomTexture");
-	location_chromaticAbberation = this->getUniformLocation("chromaticAbberation");
+	location_texture = this->getUniformLocation("inputTexture");
 }
 
-void HDRRenderer::bindAttributes()
+void ChromaticAbberation::bindAttributes()
 {
 	this->bindAttribute(0, "position");
 	this->bindAttribute(1, "textureCoords");
 }
 
-void HDRRenderer::bindFBO()
+void ChromaticAbberation::bindFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
-void HDRRenderer::render(Sprite& object, unsigned int texture, unsigned int bloomTexture)
+void ChromaticAbberation::render(Sprite& object, unsigned int texture)
 {
 	if (sizeHasChanged)
 	{
@@ -92,10 +78,6 @@ void HDRRenderer::render(Sprite& object, unsigned int texture, unsigned int bloo
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, bloomTexture);
-
-	this->loadInt(location_chromaticAbberation, true);
 
 	glDrawElements(GL_TRIANGLES, object.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 
@@ -106,17 +88,17 @@ void HDRRenderer::render(Sprite& object, unsigned int texture, unsigned int bloo
 	this->unbind();
 }
 
-void HDRRenderer::unbindFBO()
+void ChromaticAbberation::unbindFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void HDRRenderer::onSizeChange(GLFWwindow* window, int width, int height)
+void ChromaticAbberation::onSizeChange(GLFWwindow* window, int width, int height)
 {
 	sizeHasChanged = true;
 }
 
-HDRRenderer::~HDRRenderer()
+ChromaticAbberation::~ChromaticAbberation()
 {
 	glDeleteTextures(1, &fboTexture);
 	glDeleteFramebuffers(1, &fbo);

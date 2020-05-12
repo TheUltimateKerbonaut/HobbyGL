@@ -39,4 +39,15 @@ void main()
 	{
 		gNormal.a *= texture(specularMap, textureTiling * out_textureCoords).r;
 	}
+
+	if (hasReflectionMap)
+	{
+		vec3 I = normalize(out_worldPos - cameraPosition);
+		vec3 R = reflect(I, normalize(out_worldNormal));
+
+		//float fresnelFactor = pow(dot(I, normalize(out_worldNormal)), 1.0) * -1;
+		//fresnelFactor = clamp(fresnelFactor, 0, 1);
+		//gAlbedoSpec.rgb = mix(texture(reflectionMap, R).rgb, gAlbedoSpec.rgb, fresnelFactor);
+		gAlbedoSpec.rgb = mix(texture(reflectionMap, R).rgb, gAlbedoSpec.rgb, 0.0f);
+	}
 }

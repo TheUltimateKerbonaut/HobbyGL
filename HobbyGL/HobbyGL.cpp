@@ -37,14 +37,18 @@ int main()
 	bool releaseControl = false;
 	World world = World(camera);
 
+
+	float brightness = 3.0f;
+
 	Light sun = Light(Light::point, true);
-	sun.position = glm::vec3(0, 1, 3);
-	sun.colour = glm::vec3(0.6f, 0.6f, 0.35f);
+	sun.position = glm::vec3(5, 1, 5);
+	sun.colour = glm::vec3(0.6f * brightness, 0.6f * brightness, 0.35f * brightness);
 	world.lights.push_back(sun);
 
 	Light sun2 = Light(Light::point, true);
-	sun2.position = glm::vec3(-5, 5, -5);
-	sun2.colour = glm::vec3(0.3, 0.8, 0.8);
+	sun2.position = glm::vec3(-5, 1, -5);
+	sun2.colour = glm::vec3(0.3 * brightness, 0.8 * brightness, 0.8 * brightness);
+
 	world.lights.push_back(sun2);
 
 	Sprite sprite = Sprite("pappa.png", 0.5f);
@@ -57,18 +61,41 @@ int main()
 	floor.specularFactor = 10.0f;
 	world.gameObjects.push_back(floor);
 
+	GameObject room = GameObject("room", "white.png");
+	room.transform.position.y = -1;
+	room.textureTiling = 2.0f;
+	world.gameObjects.push_back(room);
+
+	GameObject sphere = GameObject("polySphere", "white.png");
+	sphere.transform.position.y = 2;
+	sphere.addReflection();
+	world.gameObjects.push_back(sphere);
+
 	GameObject barrel = GameObject("barrel", "barrel.png", "barrelNormal.png", "barrelSpecular.png");
 	barrel.transform.scale = 0.2f;
-	barrel.specularFactor = 2;
+	barrel.transform.position.x = 3;
+	barrel.transform.position.z = 3;
 	world.gameObjects.push_back(barrel);
 
+	GameObject crate = GameObject("cube", "crate.png", "crateNormal.png");
+	crate.transform.position = glm::vec3(-3, 0, 3);
+	world.gameObjects.push_back(crate);
+
 	GameObject monkey = GameObject("monkey", "white.png");
-	monkey.transform.position.x = 3;
+	monkey.specularFactor = 3.0f;
+	monkey.transform.position = glm::vec3(-3, 0, -3);
 	world.gameObjects.push_back(monkey);
 
-	GameObject cube = GameObject("cube", "bricks.png", "bricksNormal.png");
-	cube.transform.position.x = -3;
-	world.gameObjects.push_back(cube);
+	GameObject cone = GameObject("cube", "bricks.png", "bricksNormal.png");
+	cone.transform.position = glm::vec3(3, 0, -3);
+	world.gameObjects.push_back(cone);
+
+	engine.bakeShadows(world);
+	engine.bakeReflections(world);
+
+	Logger::err("Had to skip reflection garbage collection!");
+
+	camera.pitch = 20;
 
 	while (engine.shouldRun())
 	{
@@ -77,8 +104,7 @@ int main()
 		if (glfwGetKey(engine.display.window, GLFW_KEY_ENTER)) releaseControl = true;
 
 		if (releaseControl) camera.update();
-
-		barrel.transform.rotation.y += 5.0f * Engine::deltaTime;
+		else glfwSetInputMode(engine.display.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 		if (!releaseControl)
 		{

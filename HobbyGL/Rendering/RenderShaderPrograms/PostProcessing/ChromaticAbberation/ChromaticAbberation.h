@@ -9,13 +9,13 @@
 #include <map>
 #include <vector>
 
-class HDRRenderer : RenderShaderProgram
+class ChromaticAbberation : RenderShaderProgram
 {
 public:
-	HDRRenderer(Display& display);
-	~HDRRenderer();
+	ChromaticAbberation(Display& display);
+	~ChromaticAbberation();
 
-	void render(Sprite& sprite, unsigned int texture, unsigned int bloomTexture);
+	void render(Sprite& sprite, unsigned int texture);
 
 	virtual void connectTextureUnits();
 
@@ -23,11 +23,11 @@ public:
 	void unbindFBO();
 
 	unsigned int fboTexture;
-	unsigned int fboBrightTexture;
+
+	static bool sizeHasChanged;
 
 private:
 
-	static bool sizeHasChanged;
 	static void onSizeChange(GLFWwindow* window, int width, int height);
 
 	void constructFBO();
@@ -36,9 +36,6 @@ private:
 	virtual void bindAttributes();
 
 	unsigned int location_texture;
-	unsigned int location_bloomTexture;
-
-	unsigned int location_chromaticAbberation;
 
 	unsigned int fbo;
 

@@ -7,7 +7,8 @@
 bool MasterRenderer::sizeChanged;
 
 MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()), 
-gBufferRenderer(display), ssaoRenderer(display), hdrRenderer(display), bloomRenderer(display), ditheringRenderer(display)
+gBufferRenderer(display), ssaoRenderer(display), ssaoBlurRenderer(display), hdrRenderer(display), bloomRenderer(display), ditheringRenderer(display), dofRenderer(display),
+chromaticAbberation(display)
 {
 	constructFBO();
 	display.subscribeToWindowChange(sizeDidChange);
@@ -106,6 +107,151 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 		}
 	}
 	glCullFace(GL_BACK);
+}
+
+void MasterRenderer::bakeReflections(World& world, Config& config)
+{
+	glViewport(0, 0, Reflection::width, Reflection::height);
+
+	int oldWidth = config.width;
+	int oldHeight = config.height;
+	float oldScale = config.resolutionScale;
+	config.width = Reflection::width;
+	config.height = Reflection::height;
+	config.resolutionScale = 1;
+
+	GBufferRenderer::sizeHasChanged = true;
+	BloomRenderer::sizeHasChanged = true;
+	DitheringRenderer::sizeHasChanged = true;
+	DOFRenderer::sizeHasChanged = true;
+	HDRRenderer::sizeHasChanged = true;
+	SSAOBlurRenderer::sizeHasChanged = true;
+	SSAORenderer::sizeHasChanged = true;
+	ChromaticAbberation::sizeHasChanged = true;
+
+	sizeChanged = true;
+	
+
+	for (GameObject g : world.gameObjects)
+	{
+		if (g.hasReflection)
+		{
+			for (unsigned int face = 0; face < 6; ++face)
+			{
+				glEnable(GL_DEPTH_TEST);
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
+
+				g.reflection.updateMatrices(g.transform.position, face);
+				Camera camera = Camera(g.reflection.viewProjectionMatrix);
+				camera.viewProjectionMatrix = g.reflection.viewProjectionMatrix;
+				camera.viewMatrix = g.reflection.viewMatrix;
+				camera.projectionMatrix = g.reflection.projectionMatrix;
+
+				//camera.orthographicMatrix = g.reflection.orthographicMatrix;
+				//camera.viewOrthographicMatrix = g.reflection.viewOrthographicMatrix;
+
+				
+				// G-Buffer pass
+				gBufferRenderer.bindFBO();
+				prepareFrame(config);
+
+				for (GameObject x : world.gameObjects)
+				{
+					if (g.reflection.fbo != x.reflection.fbo) // Avoid self reflection
+						gBufferRenderer.render(x, camera);
+				}
+				gBufferRenderer.unbindFBO();
+				// I have to render twice lest the entire thing fails... ON ONLY ONE CUBEMAP FACE! Driver bug?
+				gBufferRenderer.bindFBO();
+				prepareFrame(config);
+				for (GameObject x : world.gameObjects)
+				{
+					if (g.reflection.fbo != x.reflection.fbo)
+						gBufferRenderer.render(x, camera);
+				}
+				gBufferRenderer.unbindFBO();
+
+				// 2D rendering
+				glDisable(GL_CULL_FACE);
+
+				
+				// SSAO pass
+				ssaoRenderer.bindFBO();
+				prepareFrame(config);
+				ssaoRenderer.render(renderImage, camera, gBufferRenderer.gPosition, gBufferRenderer.gNormal);
+				ssaoRenderer.unbindFBO();
+
+				
+				// SSAO Blur pass
+				ssaoBlurRenderer.bindFBO();
+				prepareFrame(config);
+				ssaoBlurRenderer.render(renderImage, ssaoRenderer.ssaoColorBuffer);
+				ssaoBlurRenderer.unbindFBO();
+				
+
+				// Deferred rendering pass
+				g.reflection.bindFBO(face);
+				prepareFrame(config);
+				deferredLightingRenderer.render(renderImage, camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec,
+					ssaoBlurRenderer.fboBlurTexture, shadowRenderer.shadowmapTexture, pointShadowRenderer.shadowmapTexture);
+				g.reflection.unbindFBO();
+
+				
+			}
+		}
+	}
+
+	config.width = oldWidth;
+	config.height = oldHeight;
+	config.resolutionScale = oldScale;
+
+	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
+
+	GBufferRenderer::sizeHasChanged = true;
+	BloomRenderer::sizeHasChanged = true;
+	DitheringRenderer::sizeHasChanged = true;
+	DOFRenderer::sizeHasChanged = true;
+	HDRRenderer::sizeHasChanged = true;
+	SSAOBlurRenderer::sizeHasChanged = true;
+	SSAORenderer::sizeHasChanged = true;
+	ChromaticAbberation::sizeHasChanged = true;
+
+	sizeChanged = true;
+}
+
+void MasterRenderer::renderFrame(World& world, Config& config)
+{
+	//bakeReflections(world, config);
+	//return;
+	
+	world.camera.updateViewMatrix();
+
+	if (lastFrameResolutionScale != config.resolutionScale)
+	{
+		GBufferRenderer::sizeHasChanged = true;
+		BloomRenderer::sizeHasChanged = true;
+		DitheringRenderer::sizeHasChanged = true;
+		DOFRenderer::sizeHasChanged = true;
+		HDRRenderer::sizeHasChanged = true;
+		SSAOBlurRenderer::sizeHasChanged = true;
+		SSAORenderer::sizeHasChanged = true;
+		ChromaticAbberation::sizeHasChanged = true;
+		sizeChanged = true;
+	}
+
+	if (sizeChanged)
+	{
+		glDeleteTextures(1, &fboTexture);
+		glDeleteBuffers(1, &fbo);
+		constructFBO();
+		sizeChanged = false;
+	}
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 
 	// Switch to scaled res
 	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
@@ -190,6 +336,14 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	}
 	
 
+	if (config.chromaticAbberation)
+	{
+		chromaticAbberation.bindFBO();
+		prepareFrame(config);
+		chromaticAbberation.render(renderImage, fboTexture);
+		chromaticAbberation.unbindFBO();
+	}
+
 	// Switch back to native res
 	glViewport(0, 0, config.width, config.height);
 
@@ -198,7 +352,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	glDisable(GL_CULL_FACE);
 
 	// Upscale result
-	renderImage.texture.textureID = fboTexture;
+	renderImage.texture.textureID = (config.chromaticAbberation) ? chromaticAbberation.fboTexture : fboTexture;
 	spriteRenderer.render(renderImage);
 
 	for (Sprite s : world.sprites)

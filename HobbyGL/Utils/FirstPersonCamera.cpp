@@ -7,12 +7,12 @@ FirstPersonCamera::FirstPersonCamera(Display& display) : Camera(display)
 {
 	window = display.window;
 	showMouse = false;
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void FirstPersonCamera::update()
 {
-	float moveSpeed = 0.05f;
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	float moveSpeed = 10.0f * Engine::deltaTime;
 
 
 	float forward = 0.0f;

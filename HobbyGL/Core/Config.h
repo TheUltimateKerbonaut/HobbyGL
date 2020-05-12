@@ -19,6 +19,8 @@ public:
 
 	bool bloom = true;
 	bool dithering = false;
+	bool depthOfField = true;
+	bool chromaticAbberation = false;
 
 	bool vsync = true;
 
