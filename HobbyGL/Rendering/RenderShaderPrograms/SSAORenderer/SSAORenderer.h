@@ -26,6 +26,8 @@ public:
 	unsigned int ssaoFBO;
 	unsigned int ssaoColorBuffer;
 
+	static bool sizeHasChanged;
+
 private:
 	virtual void getAllUniformLocations();
 	virtual void bindAttributes();
@@ -47,7 +49,6 @@ private:
 	void generateSamples();
 
 	static void onSizeChange(GLFWwindow* window, int width, int height);
-	static bool sizeHasChanged;
 
 };
 

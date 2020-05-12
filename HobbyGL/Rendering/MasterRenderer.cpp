@@ -4,14 +4,22 @@
 
 #include "../Core/Engine.h"
 
+#include "../Utils/Debugger.h"
+
 bool MasterRenderer::sizeChanged;
 
-MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()), 
+#include "../Utils/Logger.h"
+
+MasterRenderer::MasterRenderer(Display& display) : renderImage(Loader::loadToVao(vertices, indices, textureCoords), Texture(), Transform()),
 gBufferRenderer(display), ssaoRenderer(display), ssaoBlurRenderer(display), hdrRenderer(display), bloomRenderer(display), ditheringRenderer(display), dofRenderer(display),
 chromaticAbberation(display)
 {
 	constructFBO();
 	display.subscribeToWindowChange(sizeDidChange);
+
+	if (Engine::config.debugging)
+		Debugger::init(display);
+
 }
 
 void MasterRenderer::bindFBO()
@@ -40,7 +48,7 @@ void MasterRenderer::constructFBO()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexture, 0);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cerr << "Error: GBuffer frame buffer incomplete" << std::endl;
+		Logger::err("Error: Master renderer frame buffer incomplete");
 
 	unbindFBO();
 
@@ -57,24 +65,11 @@ void MasterRenderer::prepareFrame(Config& config)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void MasterRenderer::renderFrame(World& world, Config& config)
+void MasterRenderer::bakeShadows(World& world, Config& config)
 {
-
-	if (sizeChanged)
-	{
-		glDeleteTextures(1, &fboTexture);
-		glDeleteBuffers(1, &fbo);
-		constructFBO();
-		sizeChanged = false;
-	}
-
-	world.camera.updateViewMatrix();
-
+	// Shadows passess
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	// Shadows passess
 	glCullFace(GL_FRONT);
 	for (unsigned int i = 0; i < world.lights.size(); ++i)
 	{
@@ -128,9 +123,8 @@ void MasterRenderer::bakeReflections(World& world, Config& config)
 	SSAOBlurRenderer::sizeHasChanged = true;
 	SSAORenderer::sizeHasChanged = true;
 	ChromaticAbberation::sizeHasChanged = true;
-
 	sizeChanged = true;
-	
+
 
 	for (GameObject g : world.gameObjects)
 	{
@@ -151,7 +145,7 @@ void MasterRenderer::bakeReflections(World& world, Config& config)
 				//camera.orthographicMatrix = g.reflection.orthographicMatrix;
 				//camera.viewOrthographicMatrix = g.reflection.viewOrthographicMatrix;
 
-				
+
 				// G-Buffer pass
 				gBufferRenderer.bindFBO();
 				prepareFrame(config);
@@ -175,20 +169,20 @@ void MasterRenderer::bakeReflections(World& world, Config& config)
 				// 2D rendering
 				glDisable(GL_CULL_FACE);
 
-				
+
 				// SSAO pass
 				ssaoRenderer.bindFBO();
 				prepareFrame(config);
 				ssaoRenderer.render(renderImage, camera, gBufferRenderer.gPosition, gBufferRenderer.gNormal);
 				ssaoRenderer.unbindFBO();
 
-				
+
 				// SSAO Blur pass
 				ssaoBlurRenderer.bindFBO();
 				prepareFrame(config);
 				ssaoBlurRenderer.render(renderImage, ssaoRenderer.ssaoColorBuffer);
 				ssaoBlurRenderer.unbindFBO();
-				
+
 
 				// Deferred rendering pass
 				g.reflection.bindFBO(face);
@@ -197,7 +191,7 @@ void MasterRenderer::bakeReflections(World& world, Config& config)
 					ssaoBlurRenderer.fboBlurTexture, shadowRenderer.shadowmapTexture, pointShadowRenderer.shadowmapTexture);
 				g.reflection.unbindFBO();
 
-				
+
 			}
 		}
 	}
@@ -207,7 +201,7 @@ void MasterRenderer::bakeReflections(World& world, Config& config)
 	config.resolutionScale = oldScale;
 
 	glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
-
+	
 	GBufferRenderer::sizeHasChanged = true;
 	BloomRenderer::sizeHasChanged = true;
 	DitheringRenderer::sizeHasChanged = true;
@@ -216,15 +210,15 @@ void MasterRenderer::bakeReflections(World& world, Config& config)
 	SSAOBlurRenderer::sizeHasChanged = true;
 	SSAORenderer::sizeHasChanged = true;
 	ChromaticAbberation::sizeHasChanged = true;
-
 	sizeChanged = true;
+
 }
 
 void MasterRenderer::renderFrame(World& world, Config& config)
 {
 	//bakeReflections(world, config);
 	//return;
-	
+
 	world.camera.updateViewMatrix();
 
 	if (lastFrameResolutionScale != config.resolutionScale)
@@ -283,7 +277,7 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 	// Deferred rendering pass
 	hdrRenderer.bindFBO();
 	prepareFrame(config);
-	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec, 
+	deferredLightingRenderer.render(renderImage, world.camera, world.lights, gBufferRenderer.gPosition, gBufferRenderer.gNormal, gBufferRenderer.gColorSpec,
 		ssaoBlurRenderer.fboBlurTexture, shadowRenderer.shadowmapTexture, pointShadowRenderer.shadowmapTexture);
 	hdrRenderer.unbindFBO();
 
@@ -321,20 +315,48 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 		ditheringRenderer.unbindFBO();
 
 		// HDR pass
-		bindFBO();
+		if (config.depthOfField) dofRenderer.bindFBO();
+		else bindFBO();
 		prepareFrame(config);
 		ditheringRenderer.render(renderImage, ditheringRenderer.fboTexture);
-		unbindFBO();
+		if (config.depthOfField) dofRenderer.unbindFBO();
+		else unbindFBO();
 	}
 	else
 	{
 		// HDR pass
-		bindFBO();
+		if (config.depthOfField) dofRenderer.bindFBO();
+		else bindFBO();
 		prepareFrame(config);
 		hdrRenderer.render(renderImage, hdrRenderer.fboTexture, bloomRenderer.fboTextures[!horizontal]);
+		if (config.depthOfField) dofRenderer.unbindFBO();
+		else unbindFBO();
+	}
+
+	if (config.depthOfField)
+	{
+		// DOF blur pass
+		unsigned int amount = 10;
+		first_iteration = true;
+		glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale / bloomRenderer.scale), (unsigned int)(config.height / config.resolutionScale / bloomRenderer.scale));
+		for (unsigned int i = 0; i < amount; i++)
+		{
+			bloomRenderer.bindFBO(horizontal);
+			prepareFrame(config);
+			bloomRenderer.render(renderImage, (first_iteration) ? dofRenderer.fboTexture : bloomRenderer.fboTextures[!horizontal], horizontal);
+			horizontal = !horizontal;
+			if (first_iteration)
+				first_iteration = false;
+		}
+		bloomRenderer.unbindFBO();
+		glViewport(0, 0, (unsigned int)(config.width / config.resolutionScale), (unsigned int)(config.height / config.resolutionScale));
+
+		// DOF combine pass
+		bindFBO();
+		prepareFrame(config);
+		dofRenderer.render(renderImage, gBufferRenderer.gDepth, bloomRenderer.fboTextures[!horizontal], dofRenderer.fboTexture, world.camera);
 		unbindFBO();
 	}
-	
 
 	if (config.chromaticAbberation)
 	{
@@ -362,10 +384,22 @@ void MasterRenderer::renderFrame(World& world, Config& config)
 
 }
 
+void MasterRenderer::endFrame(Config& config, World& world)
+{
+	lastFrameResolutionScale = config.resolutionScale;
+
+	if (config.debugging)
+		Debugger::renderFrame(config, world);
+}
+
 MasterRenderer::~MasterRenderer()
 {
 	glDeleteTextures(1, &fboTexture);
 	glDeleteBuffers(1, &fbo);
-}
 
+	if (Engine::config.debugging)
+	{
+		Debugger::close();
+	}
+}
 

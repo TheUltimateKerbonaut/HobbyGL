@@ -17,6 +17,16 @@ Engine::Engine() : display(config), masterRenderer(display)
 	FPS = 0;
 }
 
+void Engine::bakeShadows(World& world)
+{
+	masterRenderer.bakeShadows(world, config);
+}
+
+void Engine::bakeReflections(World& world)
+{
+	masterRenderer.bakeReflections(world, config);
+}
+
 bool Engine::shouldRun()
 {
 	return !display.windowShouldClose();
@@ -37,13 +47,14 @@ void Engine::prepare()
 		timeSinceLastFPSUpdate = 0.0f;
 	}
 	else { timeSinceLastFPSUpdate++; }
-
-	glfwSetWindowTitle(display.window, (std::string("FPS: ") + std::to_string(FPS) + std::string("ms")).c_str());
 }
 
 void Engine::update(World& world)
 {
 	masterRenderer.renderFrame(world, config);
+
+	masterRenderer.endFrame(config, world);
+
 	display.update();
 }
 

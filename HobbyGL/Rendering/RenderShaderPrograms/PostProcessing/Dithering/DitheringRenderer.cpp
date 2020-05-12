@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include "../../../../Utils/Logger.h"
+
 bool DitheringRenderer::sizeHasChanged;
 
 DitheringRenderer::DitheringRenderer(Display& display) : RenderShaderProgram("ditheringShaderVertex.glsl", "ditheringShaderFragment.glsl")
@@ -30,7 +32,7 @@ void DitheringRenderer::constructFBO()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexture, 0);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cerr << "Error: GBuffer frame buffer incomplete" << std::endl;
+		Logger::err("Error: Dithering frame buffer incomplete");
 
 	unbindFBO();
 	

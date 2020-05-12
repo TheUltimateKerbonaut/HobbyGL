@@ -26,9 +26,10 @@ public:
 
 	const float scale = 1;
 
+	static bool sizeHasChanged;
+
 private:
 
-	static bool sizeHasChanged;
 	static void onSizeChange(GLFWwindow* window, int width, int height);
 
 	void constructFBO();

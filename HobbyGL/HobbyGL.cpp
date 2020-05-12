@@ -1,6 +1,3 @@
-// HobbyGL.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <glad/glad.h>
 #include <GLFW\glfw3.h>
 
@@ -21,6 +18,7 @@
 #include "Rendering/MasterRenderer.h"
 
 #include "Utils/FirstPersonCamera.h"
+#include "Utils/Logger.h"
 
 static void quitWhenEscape(GLFWwindow* window, int key, int scancode, int action, int mods);
 

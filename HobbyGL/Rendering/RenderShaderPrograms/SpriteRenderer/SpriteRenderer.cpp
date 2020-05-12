@@ -50,6 +50,28 @@ void SpriteRenderer::render(Sprite& sprite, Camera& camera)
 	this->unbind();
 }
 
+void SpriteRenderer::render(Sprite& sprite, glm::mat4 matrix)
+{
+	this->bind();
+	this->connectTextureUnits();
+
+	glBindVertexArray(sprite.mesh.vaoID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, sprite.texture.textureID);
+	glm::mat4 MVP = matrix * sprite.transform.getMatrix();
+	this->loadMat4(location_MVP, MVP);
+
+	glDrawElements(GL_TRIANGLES, sprite.mesh.vertexCount, GL_UNSIGNED_INT, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glBindVertexArray(0);
+
+	this->unbind();
+}
+
 void SpriteRenderer::render(Sprite& sprite)
 {
 	this->bind();

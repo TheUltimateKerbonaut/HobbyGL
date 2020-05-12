@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include "../../../../Utils/Logger.h"
+
 bool HDRRenderer::sizeHasChanged;
 
 HDRRenderer::HDRRenderer(Display& display) : RenderShaderProgram("HDRShaderVertex.glsl", "HDRShaderFragment.glsl")
@@ -44,7 +46,7 @@ void HDRRenderer::constructFBO()
 	glDrawBuffers(2, attachments);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cerr << "Error: GBuffer frame buffer incomplete" << std::endl;
+		Logger::err("Error: HDR frame buffer incomplete");
 
 	unbindFBO();
 }
@@ -59,7 +61,6 @@ void HDRRenderer::getAllUniformLocations()
 {
 	location_texture = this->getUniformLocation("hdrTexture");
 	location_bloomTexture = this->getUniformLocation("bloomTexture");
-	location_chromaticAbberation = this->getUniformLocation("chromaticAbberation");
 }
 
 void HDRRenderer::bindAttributes()
@@ -94,8 +95,6 @@ void HDRRenderer::render(Sprite& object, unsigned int texture, unsigned int bloo
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, bloomTexture);
-
-	this->loadInt(location_chromaticAbberation, true);
 
 	glDrawElements(GL_TRIANGLES, object.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 

@@ -25,9 +25,10 @@ public:
 	unsigned int fboTexture;
 	unsigned int fboBrightTexture;
 
+	static bool sizeHasChanged;
+
 private:
 
-	static bool sizeHasChanged;
 	static void onSizeChange(GLFWwindow* window, int width, int height);
 
 	void constructFBO();
@@ -37,8 +38,6 @@ private:
 
 	unsigned int location_texture;
 	unsigned int location_bloomTexture;
-
-	unsigned int location_chromaticAbberation;
 
 	unsigned int fbo;
 

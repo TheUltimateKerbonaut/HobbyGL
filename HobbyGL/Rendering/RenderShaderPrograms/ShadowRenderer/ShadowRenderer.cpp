@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include "../../../Utils/Logger.h"
+
 ShadowRenderer::ShadowRenderer() : RenderShaderProgram("shadowShaderVertex.glsl", "shadowShaderFragment.glsl")
 {
 	getAllUniformLocations();
@@ -43,14 +45,14 @@ ShadowRenderer::ShadowRenderer() : RenderShaderProgram("shadowShaderVertex.glsl"
 		{
 			switch (fboStatus) {
 			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-				std::cerr << i << " GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;
+				Logger::err(i + " GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-				std::cerr << i << " GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;
+				Logger::err(i + " GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
 				break;
 
 			case GL_FRAMEBUFFER_UNSUPPORTED:
-				std::cerr << i << " GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
+				Logger::err(i + " GL_FRAMEBUFFER_UNSUPPORTED");
 				break;
 			}
 		}

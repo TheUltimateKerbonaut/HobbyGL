@@ -3,6 +3,7 @@
 #include "../RenderShaderProgram.h"
 #include "../../Core/Sprite.h"
 #include "../../Core/Camera.h"
+#include "../../Core/Display.h"
 
 #include <map>
 #include <vector>
@@ -10,7 +11,7 @@
 class SSAOBlurRenderer : RenderShaderProgram
 {
 public:
-	SSAOBlurRenderer();
+	SSAOBlurRenderer(Display& display);
 	~SSAOBlurRenderer();
 
 	void render(Sprite& sprite, unsigned int texture);
@@ -23,6 +24,8 @@ public:
 	void bindFBO();
 	void unbindFBO();
 
+	static bool sizeHasChanged;
+
 private:
 	virtual void getAllUniformLocations();
 	virtual void bindAttributes();
@@ -32,7 +35,6 @@ private:
 	void generateFBO();
 
 	static void onSizeChange(GLFWwindow* window, int width, int height);
-	static bool sizeHasChanged;
 
 };
 

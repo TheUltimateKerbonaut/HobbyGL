@@ -6,13 +6,17 @@
 
 #include <iostream>
 
+#include "../../../Utils/Logger.h"
+
 bool SSAOBlurRenderer::sizeHasChanged;
 
-SSAOBlurRenderer::SSAOBlurRenderer() : RenderShaderProgram("SSAOBlurShaderVertex.glsl", "SSAOBlurShaderFragment.glsl")
+SSAOBlurRenderer::SSAOBlurRenderer(Display& display) : RenderShaderProgram("SSAOBlurShaderVertex.glsl", "SSAOBlurShaderFragment.glsl")
 {
 	getAllUniformLocations();
 	connectTextureUnits();
 	generateFBO();
+
+	display.subscribeToWindowChange(onSizeChange);
 }
 
 void SSAOBlurRenderer::generateFBO()
@@ -28,7 +32,7 @@ void SSAOBlurRenderer::generateFBO()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboBlurTexture, 0);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cerr << "Error: GBuffer frame buffer incomplete" << std::endl;
+		Logger::err("Error: SSAO blur frame buffer incomplete");
 
 	unbindFBO();
 }

@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include "../../../../Utils/Logger.h"
+
 bool BloomRenderer::sizeHasChanged;
 
 BloomRenderer::BloomRenderer(Display& display) : RenderShaderProgram("BloomShaderVertex.glsl", "BloomShaderFragment.glsl")
@@ -32,7 +34,7 @@ void BloomRenderer::constructFBO()
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTextures[i], 0);
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cerr << "Error: GBuffer frame buffer incomplete" << std::endl;
+			Logger::err("Error: Bloom frame buffer incomplete");
 
 		unbindFBO();
 	}

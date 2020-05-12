@@ -9,7 +9,7 @@ uniform sampler2D gNormal;
 uniform sampler2D gColour;
 uniform sampler2D ssao;
 
-uniform mat4 viewMatrix;
+uniform mat4 viewMatrixInverse;
 uniform vec3 viewPos;
 
 uniform vec3 directionalColour[MAX_LIGHTS];
@@ -77,15 +77,15 @@ const vec3 sampleOffsetDirections[20] = vec3[]
 float ShadowCalculation(vec3 fragPos, vec3 lightPos, int index)
 {
 	const float far_plane = 32.0f;
-	vec3 fragToLight = (inverse(viewMatrix) * vec4(fragPos, 1.0)).xyz - (inverse(viewMatrix) * vec4(lightPos, 1.0)).xyz;
+	vec3 fragToLight = (viewMatrixInverse * vec4(fragPos, 1.0)).xyz - (viewMatrixInverse * vec4(lightPos, 1.0)).xyz;
 
 	float currentDepth = length(fragToLight);
 
 	// PCF
 	float shadow = 0.0;
 	float bias = 0.15f;
-	int samples = 20;
-	float viewDistance = length(viewPos - (inverse(viewMatrix) * vec4(fragPos, 1.0)).xyz);
+	int samples = 5;
+	float viewDistance = length(viewPos - (viewMatrixInverse * vec4(fragPos, 1.0)).xyz);
 	//float diskRadius = 0.05;
 	float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0f;
 	for (int i = 0; i < samples; ++i)
@@ -174,7 +174,7 @@ void main()
 		//lighting += shadow;
 	}
 	
-	outColour = vec4(Albedo * lighting, 1.0);
+	outColour = vec4(lighting * Albedo, 1.0);
 
 	// Bloom
 	float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));

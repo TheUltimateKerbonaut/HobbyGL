@@ -99,6 +99,7 @@
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,6 +116,7 @@
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +135,7 @@
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,6 +156,7 @@
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -181,6 +185,7 @@
     <ClCompile Include="Rendering\RenderShaderPrograms\PointShadowRenderer\PointShadowRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\Bloom\BloomRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\Dithering\DitheringRenderer.cpp" />
+    <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\DOF\DOFRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\PostProcessing\HDR\HDRRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\ShadowRenderer\ShadowRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\SSAOBlurRenderer\SSAOBlurRenderer.cpp" />
@@ -193,6 +198,7 @@
     <ClCompile Include="Rendering\MasterRenderer.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\RenderShaderProgram.cpp" />
     <ClCompile Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.cpp" />
+    <ClCompile Include="Utils\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Camera.h" />
@@ -221,6 +227,7 @@
     <ClInclude Include="Rendering\RenderShaderPrograms\PointShadowRenderer\PointShadowRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\Bloom\BloomRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\Dithering\DitheringRenderer.h" />
+    <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\DOF\DOFRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\PostProcessing\HDR\HDRRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\ShadowRenderer\ShadowRenderer.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\SSAOBlurRenderer\SSAOBlurRenderer.h" />
@@ -232,6 +239,7 @@
     <ClInclude Include="Rendering\RenderShaderPrograms\RenderShaderProgram.h" />
     <ClInclude Include="Rendering\RenderShaderPrograms\SpriteRenderer\SpriteRenderer.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Utils\Logger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

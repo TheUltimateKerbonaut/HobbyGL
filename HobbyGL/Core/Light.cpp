@@ -8,8 +8,8 @@ float Light::far_plane = 32.0f;
 
 int Light::width = 4096;
 int Light::height = 4096;
-int Light::pointWidth = 1900;
-int Light::pointHeight = 1900;
+int Light::pointWidth = 1500;
+int Light::pointHeight = 1500;
 
 unsigned int Light::currentDirectionalsLightCount = 0;
 unsigned int Light::currentPointsLightCount = 0;

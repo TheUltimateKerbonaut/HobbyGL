@@ -9,6 +9,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../../Utils/Logger.h"
+
 RenderShaderProgram::RenderShaderProgram(std::string VERTEX_SHADER_LOCATION, std::string FRAGMENT_SHADER_LOCATION)
 {
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -87,8 +89,8 @@ void RenderShaderProgram::validateLinkingSuccesss(unsigned int programID)
 	{
 		char infoLog[512];
 		glGetProgramInfoLog(programID, 512, NULL, infoLog);
-		std::cerr << "Error: failed to link shader" << infoLog << std::endl;
-		exit(EXIT_FAILURE);
+		Logger::err("Error: failed to link shader" + std::string(infoLog));
+		//exit(EXIT_FAILURE);
 	}
 }
 
@@ -100,8 +102,8 @@ void RenderShaderProgram::validateCompilationSuccesss(unsigned int shaderID, boo
 	{
 		char infoLog[512];
 		glGetProgramInfoLog(shaderID, 512, NULL, infoLog);
-		std::cerr << "Error: failed to compile " << (isVertexShader ? "vertex shader" : "fragment shader") << fileName << " " << infoLog << std::endl;
-		exit(EXIT_FAILURE);
+		Logger::err("Error: failed to compile " + std::string(isVertexShader ? "vertex shader" : "fragment shader") + fileName + " " + infoLog);
+		//exit(EXIT_FAILURE);
 	}
 }
 
@@ -122,7 +124,7 @@ std::string RenderShaderProgram::loadShaderFromFile(std::string location)
 
 	if (contents == "")
 	{
-		std::cerr << "Error: could not load shader with location " << location << std::endl;
+		Logger::err("Error: could not load shader with location " + location);
 	}
 
 	return contents;

@@ -17,6 +17,8 @@ public:
 
 	void prepare();
 	void update(World& world);
+	void bakeShadows(World& world);
+	void bakeReflections(World& world);
 
 	static Config config;
 	Display display;

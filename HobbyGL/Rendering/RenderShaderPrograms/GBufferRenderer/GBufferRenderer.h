@@ -23,11 +23,12 @@ public:
 	void bindFBO();
 	void unbindFBO();
 
-	unsigned int gPosition, gNormal, gColorSpec;
+	unsigned int gPosition, gNormal, gColorSpec, gDepth;
+
+	static bool sizeHasChanged;
 
 private:
 
-	static bool sizeHasChanged;
 	static void onSizeChange(GLFWwindow* window, int width, int height);
 
 	void constructFBO();
@@ -46,6 +47,9 @@ private:
 
 	unsigned int location_specularMap;
 	unsigned int location_hasSpecularMap;
+
+	unsigned int location_reflectionMap;
+	unsigned int location_hasReflectionMap;
 
 	unsigned int location_textureTiling;
 

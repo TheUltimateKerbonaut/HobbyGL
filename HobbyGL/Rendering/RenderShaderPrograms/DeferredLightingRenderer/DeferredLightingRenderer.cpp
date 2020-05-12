@@ -3,7 +3,7 @@
 
 #include <glad/glad.h>
 
-#include <iostream>
+#include "../../../Utils/Logger.h"
 
 DeferredLightingRenderer::DeferredLightingRenderer() : RenderShaderProgram("deferredLightingShaderVertex.glsl", "deferredLightingShaderFragment.glsl")
 {
@@ -30,7 +30,7 @@ void DeferredLightingRenderer::getAllUniformLocations()
 	location_directionalShadowmaps = this->getUniformLocation("directionalShadowmaps");
 	location_pointShadowmaps = this->getUniformLocation("pointShadowmaps");
 
-	location_viewMatrix = this->getUniformLocation("viewMatrix");
+	location_viewMatrix = this->getUniformLocation("viewMatrixInverse");
 	location_viewPos = this->getUniformLocation("viewPos");
 
 	location_directionals = this->getUniformLocation("directionals");
@@ -85,7 +85,7 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 	for (unsigned int i = 0; i < lights.size(); i++)
 	{
 		if (i >= maxLights)
-			std::cerr << "Error: Too many lights - max supported " << maxLights << std::endl;
+			Logger::err("Error: Too many lights - max supported " + maxLights);
 
 		if (lights[i].get().lightType == Light::directional)
 		{
@@ -116,7 +116,7 @@ void DeferredLightingRenderer::render(Sprite& sprite, Camera& camera, std::vecto
 	this->loadInt(location_points, points);
 	this->loadFloat(location_pointFarPlane, Light::far_plane);
 
-	this->loadMat4(location_viewMatrix, camera.viewMatrix);
+	this->loadMat4(location_viewMatrix, glm::inverse(camera.viewMatrix));
 	this->loadVec3(location_viewPos, camera.position);
 
 	glDrawElements(GL_TRIANGLES, sprite.mesh.vertexCount, GL_UNSIGNED_INT, 0);

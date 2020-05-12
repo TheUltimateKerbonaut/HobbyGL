@@ -7,7 +7,10 @@
 #include "Transform.h"
 #include "../Rendering/Loader.h"
 
+#include "Reflection.h"
+
 #include <iostream>
+
 class GameObject
 {
 public:
@@ -25,6 +28,9 @@ public:
 	float specularFactor;
 
 	float textureTiling;
+
+	Reflection reflection;
+	bool hasReflection= false;
 
 	GameObject(Mesh _mesh, Texture _texture, Transform _transform)
 	{
@@ -70,6 +76,17 @@ public:
 		hasSpecularMap = true;
 		specularFactor = 1.0f;
 		textureTiling = 1.0f;
+	}
+
+	void addReflection()
+	{
+		reflection = Reflection(transform.position);
+		hasReflection = true;
+	}
+
+	~GameObject()
+	{
+		if (hasReflection) reflection.destroyFBO();
 	}
 
 };

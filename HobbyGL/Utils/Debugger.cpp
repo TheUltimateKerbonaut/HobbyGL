@@ -32,7 +32,7 @@ void Debugger::renderFrame(Config& config, World& world)
 		for (int i = 0; i < 100; i++)
 		{
 			int size = performance.size();
-			
+
 			if (performance.size() >= (unsigned int)(size - i - 1)) values[i] = performance[size - i - 1];
 		}
 
@@ -50,7 +50,7 @@ void Debugger::renderFrame(Config& config, World& world)
 		ImGui::Checkbox("Bloom", &config.bloom);
 		ImGui::Checkbox("Dithering", &config.dithering);
 		ImGui::Checkbox("Depth of field", &config.depthOfField);
-		ImGui::Checkbox("Chromatic aberration", &config.chromaticAbberation);
+		ImGui::Checkbox("Chromatic abberation", &config.chromaticAbberation);
 		ImGui::SliderFloat("Resolution scale", &config.resolutionScale, 0.5f, config.width / 320.0f);
 
 		ImGui::NewLine();

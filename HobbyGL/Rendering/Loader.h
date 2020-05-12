@@ -56,6 +56,7 @@ public:
 	static Mesh loadToVao(const std::string& fileName, bool hasTangents);
 
 	static Texture loadTexture(std::string fileName);
+	static Texture loadCubemapTexture(std::string fileNames[6]);
 	static TextureReturn loadTextureAndGetDimensions(std::string fileName);
 
 	static void close();

@@ -16,9 +16,16 @@ Camera::Camera(Display& display)
 	display.subscribeToWindowChange(onDisplaySizeChange);
 }
 
+Camera::Camera(glm::mat4 projectionViewMatrix)
+{
+	viewProjectionMatrix = projectionViewMatrix;
+	orthographicMatrix = glm::ortho(0.0f, (float)Engine::config.width, (float)Engine::config.height, 0.0f, zNEAR, zFAR);
+	viewOrthographicMatrix = orthographicMatrix * glm::translate(glm::vec3(0, 0, -1));
+}
+
 void Camera::updateProjectionMatrix()
 {
-	projectionMatrix = glm::perspective(glm::radians((float)FOV), (float)Engine::config.width / (float)Engine::config.height, (float)zNEAR, (float)zFAR);
+	projectionMatrix = glm::perspective(glm::radians((float)FOV), ((float)Engine::config.width / (float)Engine::config.resolutionScale) / ((float)Engine::config.height / (float)Engine::config.resolutionScale), (float)zNEAR, (float)zFAR);
 	orthographicMatrix = glm::ortho(0.0f, (float)Engine::config.width, (float)Engine::config.height, 0.0f, zNEAR, zFAR);
 }
 

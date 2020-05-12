@@ -32,6 +32,10 @@ public:
 
 	void prepareFrame(Config& config);
 	void renderFrame(World& world, Config& config);
+	void endFrame(Config& config, World& world);
+
+	void bakeShadows(World& world, Config& config);
+	void bakeReflections(World& world, Config& config);
 
 private:
 	SpriteRenderer spriteRenderer;
@@ -76,5 +80,6 @@ private:
 	static bool sizeChanged;
 	static void sizeDidChange(GLFWwindow* window, int width, int height);
 
-};
+	float lastFrameResolutionScale;
 
+};

@@ -13,6 +13,8 @@ std::vector<unsigned int> Loader::VAOs;
 std::vector<unsigned int> Loader::VBOs;
 std::vector<unsigned int> Loader::Textures;
 
+#include "../Utils/Logger.h"
+
 Loader::Loader()
 {
 
@@ -112,7 +114,7 @@ Texture Loader::loadTexture(std::string fileName)
 		unsigned char *data = stbi_load(("res/" + fileName).c_str(), &width, &height, &nrChannels, 0);
 		if (!data)
 		{
-			std::cerr << "Failed to load texture " << fileName.c_str() << std::endl;
+			Logger::err("Failed to load texture " + std::string(fileName.c_str()));
 		}
 
 		unsigned int textureID;
@@ -147,6 +149,50 @@ Texture Loader::loadTexture(std::string fileName)
 	}
 }
 
+Texture Loader::loadCubemapTexture(std::string fileNames[6])
+{
+	if (textures.find(fileNames[0]) == textures.end())
+	{
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+		int width, height, nrChannels;
+		for (int i = 0; i < 6; ++i)
+		{
+			unsigned char *data = stbi_load(("res/" + fileNames[i]).c_str(), &width, &height, &nrChannels, 0);
+			if (!data)
+			{
+				Logger::err("Failed to load texture " + std::string(fileNames[i].c_str()));
+			}
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, (nrChannels == 3) ? GL_RGB : GL_RGBA, width, height, 0, (nrChannels == 3) ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
+			stbi_image_free(data);
+		}	
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+		float maxAnisotropy;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+		glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy); // 4x anisatropic filtering
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0); // unbind	
+
+		textures[fileNames[0]] = TextureMap(textureID, width, height);
+
+		Textures.push_back(textureID);
+		return Texture(textureID);
+	}
+	else
+	{
+		return Texture(textures[fileNames[0]].textureID);
+	}
+}
+
 TextureReturn Loader::loadTextureAndGetDimensions(std::string fileName)
 {
 	if (textures.find(fileName) == textures.end())
@@ -156,7 +202,7 @@ TextureReturn Loader::loadTextureAndGetDimensions(std::string fileName)
 		unsigned char *data = stbi_load(("res/" + fileName).c_str(), &width, &height, &nrChannels, 0);
 		if (!data)
 		{
-			std::cerr << "Failed to load texture " << fileName.c_str() << std::endl;
+			Logger::err("Failed to load texture " + fileName);
 		}
 
 		unsigned int textureID;
@@ -206,7 +252,7 @@ Mesh Loader::loadToVao(const std::string& fileName, bool hasTangents)
 	
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
-		std::cerr << "Error: Failed to load model " << fileName << "!" << std::endl;
+		Logger::err("Error: Failed to load model " + fileName + "!");
 		return Mesh();
 	}
 	else
@@ -254,7 +300,7 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene, std::vector<float>&
 		}
 		else
 		{
-			std::cerr << "Eror: Model does no have texture coordinates!" << std::endl;
+			Logger::err("Eror: Model does no have texture coordinates!");
 		}
 	}
 

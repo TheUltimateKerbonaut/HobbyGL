@@ -24,9 +24,10 @@ public:
 
 	unsigned int fboTexture;
 
+	static bool sizeHasChanged;
+
 private:
 
-	static bool sizeHasChanged;
 	static void onSizeChange(GLFWwindow* window, int width, int height);
 
 	void constructFBO();

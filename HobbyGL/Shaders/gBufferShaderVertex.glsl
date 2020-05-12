@@ -16,9 +16,14 @@ out vec3 out_normal;
 out vec2 out_textureCoords;
 out mat3 TBN;
 
+uniform bool hasReflectionMap;
+out vec3 out_worldPos;
+out vec3 out_worldNormal;
+
 void main()
 {
-	vec4 viewPos = viewMatrix * modelMatrix * vec4(position, 1.0);
+	vec4 worldPos = modelMatrix * vec4(position, 1.0);
+	vec4 viewPos = viewMatrix * worldPos;
 	out_position = viewPos.xyz;
 	out_textureCoords = textureCoords;
 
@@ -34,5 +39,11 @@ void main()
 		vec3 B = normalize(vec3(modelViewMatrix * vec4(cross(normal, tangent), 0.0)));
 		vec3 N = normalize(vec3(modelViewMatrix * vec4(normal, 0.0)));
 		TBN = mat3(T, B, N);
+	}
+
+	if (hasReflectionMap)
+	{
+		out_worldPos = worldPos.xyz;
+		out_worldNormal = transpose(inverse(mat3(modelMatrix))) * normal;
 	}
 }

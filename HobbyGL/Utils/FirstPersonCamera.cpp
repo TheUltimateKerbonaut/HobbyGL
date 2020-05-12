@@ -2,16 +2,17 @@
 
 #include <GLFW/glfw3.h>
 
+#include "../Core/Engine.h"
 
 FirstPersonCamera::FirstPersonCamera(Display& display) : Camera(display)
 {
 	window = display.window;
 	showMouse = false;
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void FirstPersonCamera::update()
 {
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	float moveSpeed = 10.0f * Engine::deltaTime;
 
 

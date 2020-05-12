@@ -4,6 +4,8 @@
 #include "../../Core/Sprite.h"
 #include "../../Core/Camera.h"
 
+#include <glm/glm.hpp>
+
 #include <map>
 #include <vector>
 
@@ -14,6 +16,7 @@ public:
 	~SpriteRenderer();
 
 	void render(Sprite& sprite, Camera& camera);
+	void render(Sprite& sprite, glm::mat4 matrix);
 	void render(Sprite& sprite);
 
 	virtual void connectTextureUnits();
