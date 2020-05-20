@@ -2,6 +2,7 @@
 
 #include <string>
 #include <sstream>
+#include <stdio.h>
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"
@@ -22,6 +23,8 @@ void Debugger::init(Display& display)
 
 void Debugger::renderFrame(Config& config, World& world)
 {
+	if (!config.imGui) return;
+
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();

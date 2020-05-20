@@ -106,6 +106,8 @@ void GBufferRenderer::getAllUniformLocations()
 	location_hasReflectionMap = this->getUniformLocation("hasReflectionMap");
 
 	location_textureTiling = this->getUniformLocation("textureTiling");
+
+	location_cameraPosition = this->getUniformLocation("cameraPosition");
 }
 
 void GBufferRenderer::bindAttributes()
@@ -173,7 +175,7 @@ void GBufferRenderer::render(GameObject& object, Camera& camera)
 
 	this->loadFloat(location_textureTiling, object.textureTiling);
 
-	this->loadVec3(this->getUniformLocation("cameraPosition"), camera.position);
+	this->loadVec3(location_cameraPosition, camera.position);
 
 	glDrawElements(GL_TRIANGLES, object.mesh.vertexCount, GL_UNSIGNED_INT, 0);
 

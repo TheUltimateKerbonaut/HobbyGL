@@ -53,6 +53,8 @@ private:
 
 	unsigned int location_textureTiling;
 
+	unsigned int location_cameraPosition;
+
 	unsigned int gBuffer;
 
 };

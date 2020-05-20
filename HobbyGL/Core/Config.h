@@ -17,6 +17,8 @@ public:
 	//float resolutionScale = width / 320.0f;
 	float resolutionScale = 1.0;
 
+	bool imGui = true;
+
 	bool bloom = true;
 	bool dithering = false;
 	bool depthOfField = true;
