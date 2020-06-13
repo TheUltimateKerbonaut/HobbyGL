@@ -1,7 +1,7 @@
 # HobbyGL
 A hobbyist OpenGL game engine written in C++
 
-<img width=40% src="https://raw.githubusercontent.com/TheUltimateKerbonaut/HobbyGL/master/Screenshots/Screenshot1.png" alt="Screenshot of engine running a demo scene - it looks rather good!">
+<img src="https://raw.githubusercontent.com/TheUltimateKerbonaut/HobbyGL/master/Screenshots/Screenshot1.png" alt="Screenshot of engine running a demo scene - it looks rather good!">
 
 ## Features
 Amongst other things, the engine supports:
